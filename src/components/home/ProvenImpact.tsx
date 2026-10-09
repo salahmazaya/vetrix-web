@@ -1,4 +1,4 @@
-import { TiltImage } from "../three/TiltImage";
+import { Globe } from "../three/Globe";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
 import { StatBadge } from "../ui/StatBadge";
@@ -24,15 +24,7 @@ export function ProvenImpact() {
         </div>
       </div>
 
-      <TiltImage
-        src="/images/globe.webp"
-        alt=""
-        width={1430}
-        height={767}
-        maxTilt={6}
-        className="relative mx-auto -mt-6 max-w-[1430px] lg:-mt-[40px]"
-        imageClassName="h-auto w-full"
-      />
+      <Globe className="mx-auto -mt-6 max-w-[1430px] lg:-mt-[40px]" />
     </section>
   );
 }
