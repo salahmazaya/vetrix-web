@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
+/* Design tokens from the Vetrix Figma file */
+@theme {
+  --color-navy: #000547;
+  --color-ink: #0a0a0a;
+  --color-brand: #067ac1;
+  --color-brand-bright: #008dd2;
+  --color-sky: #9fdaff;
+  --color-sky-soft: #8dd0f1;
+  --color-mist: #e8f4fc;
+  --color-muted: #717171;
+  --color-night: #0a1232;
+  --color-night-deep: #040614;
+
+  --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-poppins: var(--font-poppins-raw), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 24px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Section that sits on the dark navy gradient used across the design */
+.bg-night-gradient {
+  background-image:
+    linear-gradient(180deg, rgba(10, 18, 50, 0.5) 0%, rgb(10, 18, 50) 49.5%),
+    linear-gradient(90deg, #040614 0%, #040614 100%);
+}
+
+/* Frosted light-blue card used in the bento grid and stats */
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(240, 247, 255, 0.3) 0%, rgba(0, 141, 210, 0.06) 100%),
+    linear-gradient(90deg, rgba(240, 247, 255, 0.56), rgba(240, 247, 255, 0.56)),
+    #e6f2fb;
+}
+
+.text-gradient-brand {
+  background-image: linear-gradient(132deg, #008dd2 23%, #067ac1 76%, #000547 131%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
 }
