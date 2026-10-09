@@ -147,8 +147,9 @@ function Globe({ animate, onReady }: { animate: boolean; onReady?: () => void })
 
   useFrame((state, delta) => {
     if (!group.current || !spin.current) return;
+    // Full 360 degree turn about every 20 seconds (slower when the visitor asks for reduced motion)
+    spin.current.rotation.y += delta * (animate ? 0.31 : 0.1);
     if (animate) {
-      spin.current.rotation.y += delta * 0.12;
       if (coreMaterial.current) coreMaterial.current.uniforms.uTime.value += delta;
     }
     // Lean gently toward the pointer
