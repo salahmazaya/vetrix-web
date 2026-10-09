@@ -84,3 +84,150 @@ body {
 .animate-float-slow {
   animation: float-slow 7s ease-in-out infinite;
 }
+
+/* Our Process diagram */
+.process-stage {
+  opacity: 0;
+  transform: rotateX(18deg) scale(0.94) translateY(40px);
+  transition:
+    opacity 1s ease-out,
+    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.process-stage[data-visible="true"] {
+  opacity: 1;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+
+.process-flow-base {
+  fill: none;
+  stroke: rgba(80, 160, 255, 0.16);
+  stroke-width: 1.2;
+}
+.process-flow-pulse {
+  fill: none;
+  stroke: #7fd6ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 70 2000;
+  stroke-dashoffset: 70;
+  filter: drop-shadow(0 0 4px #3fb4ff);
+  animation: process-flow 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.process-flow-out {
+  stroke: #a8e6ff;
+  animation-duration: 2.2s;
+}
+@keyframes process-flow {
+  0% {
+    stroke-dashoffset: 70;
+  }
+  70%,
+  100% {
+    stroke-dashoffset: -1000;
+  }
+}
+
+.process-node {
+  fill: #7fd6ff;
+  animation: process-node 2.6s ease-out infinite;
+}
+@keyframes process-node {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  8% {
+    opacity: 1;
+  }
+}
+
+.process-scan {
+  animation: process-scan 5s ease-in-out infinite;
+}
+@keyframes process-scan {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(680px);
+  }
+}
+
+.process-spin-slow {
+  animation: process-spin 60s linear infinite;
+}
+.process-spin-reverse {
+  animation: process-spin 14s linear infinite reverse;
+}
+@keyframes process-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.process-stage-text {
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+.process-stage-word {
+  fill: #4f86c2;
+  animation-name: process-word;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes process-word {
+  0%,
+  20%,
+  100% {
+    fill: #4f86c2;
+    filter: none;
+  }
+  5%,
+  12% {
+    fill: #c8f0ff;
+    filter: drop-shadow(0 0 4px #3fb4ff);
+  }
+}
+
+.process-pulse {
+  fill: none;
+  stroke: #3fb4ff;
+  stroke-width: 1;
+  transform-origin: center;
+  animation: process-pulse 3.2s ease-out infinite;
+}
+@keyframes process-pulse {
+  from {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+.process-core-glow {
+  fill: #1f7ee0;
+  filter: blur(14px);
+  animation: process-breathe 4s ease-in-out infinite;
+}
+.process-glow {
+  filter: drop-shadow(0 0 5px #5fd0ff);
+}
+@keyframes process-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-stage {
+    opacity: 1;
+    transform: none;
+  }
+}

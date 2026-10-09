@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
+import { ProcessDiagram } from "./ProcessDiagram";
 
 export function OurProcess() {
   return (
@@ -16,20 +16,7 @@ export function OurProcess() {
           title="From Logic to Launch"
           description="We don't just write code; we build the future of your operations. Our step-by-step process ensures your custom CRM, website, or automation tool is built to last."
         />
-        <div className="group relative [perspective:1600px]">
-          <Image
-            src="/images/process-diagram.webp"
-            alt="Ve sits at the center of your stack: it collects, normalizes, enriches and routes data from your existing apps into reporting, AI search, insights and third-party tools."
-            width={1120}
-            height={692}
-            className="h-auto w-full [mask-image:radial-gradient(ellipse_at_center,black_62%,transparent_100%)] transition-transform duration-700 ease-out group-hover:[transform:rotateX(6deg)]"
-          />
-          {/* Pulsing ring over the Ve hub */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[22%] -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full border border-brand-bright/40 [animation-duration:3s]"
-          />
-        </div>
+        <ProcessDiagram />
       </div>
     </section>
   );
