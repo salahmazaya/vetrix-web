@@ -13,6 +13,16 @@ const STAGE_STEP = 1.6; // seconds each stage stays lit
 const INPUT_ROWS = [103, 164, 226, 287, 349, 411, 473, 535, 598];
 // One stream per destination group on the right, flowing out of the hub
 const OUTPUTS = [102, 270, 371, 473, 575];
+// Source app tiles (3 columns x 9 rows) and the destination boxes each output stream lands on
+const TILE_COLUMNS = [41, 128, 215];
+// Destination boxes in the same order as OUTPUTS: Reef panel, then the SIEM, Observability, Storage, Datalakes rows
+const OUTPUT_BOXES = [
+  { x: 833, y: 31, w: 277, h: 141 },
+  { x: 852, y: 290, w: 244, h: 48 },
+  { x: 852, y: 392, w: 244, h: 48 },
+  { x: 852, y: 494, w: 244, h: 48 },
+  { x: 852, y: 597, w: 244, h: 48 },
+];
 
 // Rounded so server and browser render identical numbers
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -38,7 +48,7 @@ export function ProcessDiagram() {
   };
 
   return (
-    <div ref={ref} className="[perspective:1600px]" onPointerMove={onMove} onPointerLeave={onLeave}>
+    <div ref={ref} data-ambient className="[perspective:1600px]" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div
         ref={stage}
         data-visible={inView}
@@ -72,6 +82,36 @@ export function ProcessDiagram() {
           <g clipPath="url(#sources)">
             <rect className="process-scan" x="40" y="-60" width="254" height="120" fill="url(#scan)" />
           </g>
+
+          {/* Source tiles light up one by one, as if sending their data */}
+          {INPUT_ROWS.flatMap((y, row) =>
+            TILE_COLUMNS.map((x, col) => (
+              <rect
+                key={`tile-${row}-${col}`}
+                x={x}
+                y={y - 26}
+                width="77"
+                height="52"
+                rx="6"
+                className="process-tile"
+                style={{ animationDelay: `${((row * 7 + col * 11) % 26) * 0.2}s` }}
+              />
+            )),
+          )}
+
+          {/* Destination boxes glow as each output stream arrives */}
+          {OUTPUT_BOXES.map((b, i) => (
+            <rect
+              key={`box-${i}`}
+              x={b.x}
+              y={b.y}
+              width={b.w}
+              height={b.h}
+              rx="6"
+              className="process-panel"
+              style={{ animationDelay: `${1.3 + i * 0.45}s` }}
+            />
+          ))}
 
           {INPUT_ROWS.map((y, i) => (
             <g key={`in-${y}`}>

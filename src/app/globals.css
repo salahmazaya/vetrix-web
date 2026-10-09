@@ -62,9 +62,10 @@ body {
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  /* Slow ambient loops (marked data-ambient) keep running; everything else stops */
+  :where(:not([data-ambient], [data-ambient] *)),
+  :where(:not([data-ambient], [data-ambient] *))::before,
+  :where(:not([data-ambient], [data-ambient] *))::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -96,6 +97,45 @@ body {
 .process-stage[data-visible="true"] {
   opacity: 1;
   transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+
+.process-tile {
+  fill: rgba(63, 180, 255, 0.08);
+  stroke: #5fc4ff;
+  stroke-width: 1.2;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #3fb4ff);
+  animation: process-tile 5.2s ease-in-out infinite;
+}
+@keyframes process-tile {
+  0%,
+  30%,
+  100% {
+    opacity: 0;
+  }
+  8%,
+  16% {
+    opacity: 1;
+  }
+}
+
+.process-panel {
+  fill: none;
+  stroke: #6fd0ff;
+  stroke-width: 1.5;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px #3fb4ff);
+  animation: process-panel 2.2s ease-out infinite;
+}
+@keyframes process-panel {
+  0%,
+  55%,
+  100% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 0.9;
+  }
 }
 
 .process-flow-base {
