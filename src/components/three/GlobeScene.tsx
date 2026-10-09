@@ -124,6 +124,7 @@ function useDigitsTexture() {
 function Globe({ animate, onReady }: { animate: boolean; onReady?: () => void }) {
   const group = useRef<THREE.Group>(null);
   const spin = useRef<THREE.Group>(null);
+  const coreMesh = useRef<THREE.Mesh>(null);
   const light = useRef(new THREE.Vector2(-0.4, 0.6));
   const coreMaterial = useRef<THREE.ShaderMaterial>(null);
   const frontMaterial = useRef<THREE.ShaderMaterial>(null);
@@ -148,7 +149,10 @@ function Globe({ animate, onReady }: { animate: boolean; onReady?: () => void })
   useFrame((state, delta) => {
     if (!group.current || !spin.current) return;
     // Full 360 degree turn about every 20 seconds (slower when the visitor asks for reduced motion)
-    spin.current.rotation.y += delta * (animate ? 0.31 : 0.1);
+    const speed = animate ? 0.31 : 0.1;
+    spin.current.rotation.y += delta * speed;
+    // The inner data core turns the other way
+    if (coreMesh.current) coreMesh.current.rotation.y -= delta * speed * 2;
     if (animate) {
       if (coreMaterial.current) coreMaterial.current.uniforms.uTime.value += delta;
     }
@@ -162,7 +166,7 @@ function Globe({ animate, onReady }: { animate: boolean; onReady?: () => void })
   return (
     <group ref={group} position={[0, -0.35, 0]}>
       <group ref={spin} rotation={[0, -1.2, 0]}>
-        <mesh renderOrder={0}>
+        <mesh ref={coreMesh} renderOrder={0}>
           <sphereGeometry args={[0.6, 64, 64]} />
           <shaderMaterial ref={coreMaterial} vertexShader={vertexShader} fragmentShader={coreFragment} uniforms={core} transparent />
         </mesh>
