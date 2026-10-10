@@ -12,13 +12,18 @@ const waveVertex = /* glsl */ `
   uniform float uPhase;
   uniform float uSize;
   attribute float aRandom;
+  attribute float aRow;
   varying float vGlow;
   varying float vDepth;
   varying float vRibbon;
+  varying float vStreak;
+  varying float vHue;
+
+  float hash(float n) { return fract(sin(n * 91.345) * 47453.5453); }
 
   void main() {
     vec3 p = position;
-    float t = uTime * 0.32 + uPhase;
+    float t = uTime * 0.55 + uPhase;
 
     // Layered swells: a long ocean roll, a crossing band and fine ripples
     float wave = sin(p.x * 0.42 + t * 1.5) * 0.6
@@ -33,8 +38,21 @@ const waveVertex = /* glsl */ `
     p.y += wave;
 
     // A bright ribbon of light that sweeps diagonally across the surface
-    float sweep = mod(uTime * 3.2 + uPhase * 7.0, 70.0) - 35.0;
-    vRibbon = exp(-pow((p.x + p.z * 0.9 - sweep) / 1.6, 2.0));
+    float sweep = mod(uTime * 6.0 + uPhase * 7.0, 70.0) - 35.0;
+    float sweep2 = mod(uTime * 4.2 + 35.0 + uPhase * 3.0, 70.0) - 35.0;
+    vRibbon = exp(-pow((p.x + p.z * 0.9 - sweep) / 1.4, 2.0))
+            + 0.6 * exp(-pow((p.x - p.z * 0.7 - sweep2) / 1.1, 2.0));
+
+    // Data comets: on a few rows a bright head races along with a fading tail
+    float h = hash(aRow + uPhase * 13.0);
+    float lane = step(0.86, h);
+    float speedX = 5.0 + h * 9.0;
+    float head = mod(uTime * speedX + h * 80.0, 60.0) - 30.0;
+    float behind = head - p.x;
+    vStreak = lane * (behind > 0.0 ? exp(-behind / 2.2) : exp(-pow(behind / 0.25, 2.0)));
+
+    // Colour drifts from cyan on the left to blue and a soft violet on the right
+    vHue = clamp(p.x / 34.0 + 0.5 + sin(uTime * 0.25) * 0.15, 0.0, 1.0);
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
@@ -42,7 +60,7 @@ const waveVertex = /* glsl */ `
     vGlow = smoothstep(-1.3, 1.7, wave);
     vDepth = clamp(-mv.z / 24.0, 0.0, 1.0);
     float twinkle = 0.75 + 0.25 * sin(uTime * 2.0 + aRandom * 40.0);
-    float size = mix(1.6, 4.0, vGlow) * (0.7 + aRandom * 0.6) * twinkle * (1.0 + vRibbon * 0.9);
+    float size = mix(2.2, 5.0, vGlow) * (0.75 + aRandom * 0.5) * twinkle * (1.0 + vRibbon * 0.8 + vStreak * 1.6);
     gl_PointSize = size * uSize * uPixelRatio * (14.0 / -mv.z);
   }
 `;
@@ -54,15 +72,22 @@ const waveFragment = /* glsl */ `
   varying float vGlow;
   varying float vDepth;
   varying float vRibbon;
+  varying float vStreak;
+  varying float vHue;
 
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     float r = length(c);
     if (r > 0.5) discard;
-    float soft = smoothstep(0.5, 0.0, r);
+    // Crisp core with a small halo keeps the dots sharp
+    float soft = smoothstep(0.5, 0.32, r) * 0.55 + smoothstep(0.3, 0.0, r) * 0.45;
+    vec3 tint = mix(vec3(0.20, 0.85, 1.0), vec3(0.42, 0.40, 1.0), vHue);
     vec3 color = mix(uDeep, uBright, vGlow);
-    color = mix(color, vec3(0.85, 0.97, 1.0), vRibbon * 0.85);
-    float alpha = soft * mix(0.45, 1.0, max(vGlow, vRibbon)) * (1.0 - vDepth * 0.65) * uOpacity;
+    color = mix(color, color * 0.6 + tint * 0.6, 0.45);
+    color = mix(color, vec3(0.88, 0.98, 1.0), clamp(vRibbon, 0.0, 1.0) * 0.85);
+    color = mix(color, vec3(1.0), clamp(vStreak, 0.0, 1.0));
+    float lit = max(max(vGlow, vRibbon), vStreak);
+    float alpha = soft * mix(0.6, 1.0, lit) * (1.0 - vDepth * 0.55) * uOpacity;
     gl_FragColor = vec4(color, alpha);
   }
 `;
@@ -119,19 +144,21 @@ function WaveLayer({ cols, rows, width, depth, position, amp, phase, size, opaci
   const mouse = useRef(new THREE.Vector2(0, 0));
   const { gl } = useThree();
 
-  const { positions, randoms } = useMemo(() => {
+  const { positions, randoms, rowIds } = useMemo(() => {
     const positions = new Float32Array(cols * rows * 3);
     const randoms = new Float32Array(cols * rows);
+    const rowIds = new Float32Array(cols * rows);
     let i = 0;
     for (let z = 0; z < rows; z++) {
       for (let x = 0; x < cols; x++) {
         positions[i * 3] = (x / (cols - 1) - 0.5) * width;
         positions[i * 3 + 2] = (z / (rows - 1) - 0.5) * depth;
         randoms[i] = rand(i + phase * 1000);
+        rowIds[i] = z;
         i++;
       }
     }
-    return { positions, randoms };
+    return { positions, randoms, rowIds };
   }, [cols, rows, width, depth, phase]);
 
   const uniforms = useMemo(
@@ -161,6 +188,7 @@ function WaveLayer({ cols, rows, width, depth, position, amp, phase, size, opaci
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-aRandom" args={[randoms, 1]} />
+        <bufferAttribute attach="attributes-aRow" args={[rowIds, 1]} />
       </bufferGeometry>
       <shaderMaterial
         ref={material}
@@ -179,7 +207,7 @@ function Dust({ speed }: { speed: number }) {
   const material = useRef<THREE.ShaderMaterial>(null);
   const { gl } = useThree();
   const { positions, randoms } = useMemo(() => {
-    const count = 260;
+    const count = 420;
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count);
     for (let i = 0; i < count; i++) {
@@ -230,7 +258,7 @@ function CameraDrift({ speed }: { speed: number }) {
 
 export default function HeroWaveScene({ active, animate }: { active: boolean; animate: boolean }) {
   // Visitors who turn animations off still get a calm, slower wave
-  const speed = animate ? 1 : 0.4;
+  const speed = animate ? 1 : 0.5;
   return (
     <Canvas
       frameloop={active ? "always" : "never"}
@@ -250,10 +278,10 @@ export default function HeroWaveScene({ active, animate }: { active: boolean; an
         position={[0, -1.2, -7]}
         amp={0.8}
         phase={2.3}
-        size={0.7}
-        opacity={0.45}
-        deep="#0a2a6e"
-        bright="#4f8fe6"
+        size={0.75}
+        opacity={0.6}
+        deep="#103a8c"
+        bright="#6aa8ff"
         speed={speed * 0.8}
       />
       <WaveLayer
@@ -261,13 +289,13 @@ export default function HeroWaveScene({ active, animate }: { active: boolean; an
         rows={70}
         width={34}
         depth={14}
-        position={[0, -2.4, 0]}
+        position={[0, -2.0, 0]}
         amp={1}
         phase={0}
         size={1}
         opacity={1}
-        deep="#0552c7"
-        bright="#9edbff"
+        deep="#1a6ee8"
+        bright="#bfe9ff"
         speed={speed}
       />
       <Dust speed={speed} />
