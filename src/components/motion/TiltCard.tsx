@@ -31,7 +31,7 @@ export function TiltCard({
     ref.current?.style.setProperty("--ry", "0deg");
   };
   return (
-    <div className="[perspective:1200px]" onPointerMove={onMove} onPointerLeave={onLeave}>
+    <div className="h-full [perspective:1200px]" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div ref={ref} className={`tilt-card ${className}`} style={style}>
         {children}
         <span aria-hidden="true" className="tilt-light pointer-events-none absolute inset-0 rounded-[inherit]" />

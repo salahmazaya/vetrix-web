@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    messages: Message;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    messages: MessagesSelect<false> | MessagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -90,12 +92,22 @@ export interface Config {
   globals: {
     header: Header;
     home: Home;
+    aiCore: AiCore;
+    about: About;
+    solutions: Solution;
+    contact: Contact;
+    faq: Faq;
     cta: Cta;
     footer: Footer;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
+    aiCore: AiCoreSelect<false> | AiCoreSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    solutions: SolutionsSelect<false> | SolutionsSelect<true>;
+    contact: ContactSelect<false> | ContactSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
     cta: CtaSelect<false> | CtaSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
@@ -173,6 +185,21 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Sent from the Contact page
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages".
+ */
+export interface Message {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -203,6 +230,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'messages';
+        value: number | Message;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -286,6 +317,18 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages_select".
+ */
+export interface MessagesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  subject?: T;
+  message?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -532,6 +575,289 @@ export interface Home {
         }[]
       | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aiCore".
+ */
+export interface AiCore {
+  id: number;
+  header: {
+    /**
+     * Page name, also used in the breadcrumb
+     */
+    title: string;
+    /**
+     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
+     */
+    headline: string;
+    intro: string;
+  };
+  brain: {
+    /**
+     * Wrap the word to colour in *stars*
+     */
+    title: string;
+    body: string;
+    image: number | Media;
+  };
+  numbers?: {
+    stats?:
+      | {
+          /**
+           * e.g. 85%, counts up
+           */
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  features: {
+    eyebrow: string;
+    /**
+     * Wrap the word to colour in *stars*
+     */
+    title: string;
+    cards?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  framework: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    image: number | Media;
+  };
+  steps: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    items?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  header: {
+    /**
+     * Page name, also used in the breadcrumb
+     */
+    title: string;
+    /**
+     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
+     */
+    headline: string;
+    intro: string;
+  };
+  identity: {
+    eyebrow: string;
+    title: string;
+    image: number | Media;
+    stats?:
+      | {
+          /**
+           * e.g. 85%, counts up
+           */
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  mission: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    points?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  vision: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    points?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  whatWeDo: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    items?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+    button: {
+      label: string;
+      href: string;
+    };
+  };
+  standard: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    cards?:
+      | {
+          title: string;
+          body: string;
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  technologies: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    /**
+     * Logos scroll along in a loop
+     */
+    badges?:
+      | {
+          name: string;
+          logo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions".
+ */
+export interface Solution {
+  id: number;
+  header: {
+    /**
+     * Page name, also used in the breadcrumb
+     */
+    title: string;
+    /**
+     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
+     */
+    headline: string;
+    intro: string;
+  };
+  deliver: {
+    /**
+     * Wrap the word to colour in *stars*
+     */
+    title: string;
+    body: string;
+    button: {
+      label: string;
+      href: string;
+    };
+    image: number | Media;
+  };
+  core: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    cards?:
+      | {
+          title: string;
+          body: string;
+          image: number | Media;
+          link: {
+            label: string;
+            href: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  methodology: {
+    eyebrow: string;
+    title: string;
+    description?: string | null;
+    steps?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact".
+ */
+export interface Contact {
+  id: number;
+  header: {
+    /**
+     * Page name, also used in the breadcrumb
+     */
+    title: string;
+    /**
+     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
+     */
+    headline: string;
+    intro: string;
+  };
+  form: {
+    title: string;
+    nameLabel: string;
+    emailLabel: string;
+    subjectLabel: string;
+    messageLabel: string;
+    submitLabel: string;
+    successTitle: string;
+    successMessage: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  eyebrow: string;
+  title: string;
+  description?: string | null;
+  items?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -792,6 +1118,291 @@ export interface HomeSelect<T extends boolean = true> {
               image?: T;
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aiCore_select".
+ */
+export interface AiCoreSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        title?: T;
+        headline?: T;
+        intro?: T;
+      };
+  brain?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        image?: T;
+      };
+  numbers?:
+    | T
+    | {
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  features?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        cards?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  framework?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  steps?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        title?: T;
+        headline?: T;
+        intro?: T;
+      };
+  identity?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        image?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  mission?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  vision?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  whatWeDo?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        button?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+            };
+      };
+  standard?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        cards?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  technologies?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        badges?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions_select".
+ */
+export interface SolutionsSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        title?: T;
+        headline?: T;
+        intro?: T;
+      };
+  deliver?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        button?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+            };
+        image?: T;
+      };
+  core?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        cards?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              image?: T;
+              link?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+            };
+      };
+  methodology?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact_select".
+ */
+export interface ContactSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        title?: T;
+        headline?: T;
+        intro?: T;
+      };
+  form?:
+    | T
+    | {
+        title?: T;
+        nameLabel?: T;
+        emailLabel?: T;
+        subjectLabel?: T;
+        messageLabel?: T;
+        submitLabel?: T;
+        successTitle?: T;
+        successMessage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
