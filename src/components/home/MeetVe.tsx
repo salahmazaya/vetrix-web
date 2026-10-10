@@ -58,7 +58,7 @@ export function MeetVe() {
             </Reveal>
             <Reveal className="glass-card bento-card flex flex-col justify-between gap-6 overflow-hidden px-8 pt-7 pb-6" delay={450}>
               <p className="text-xl leading-7 font-medium text-navy">Custom Software Solutions</p>
-              <div className="self-center">
+              <div className="flex w-full justify-center">
                 <ChipCluster />
               </div>
             </Reveal>
