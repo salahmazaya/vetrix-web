@@ -1,3 +1,5 @@
+import { CountUp } from "../motion/CountUp";
+
 type StatBadgeProps = {
   value: string;
   label: string;
@@ -8,7 +10,9 @@ type StatBadgeProps = {
 export function StatBadge({ value, label, className = "" }: StatBadgeProps) {
   return (
     <div className={`glass-card flex flex-col items-center justify-center gap-5 px-6 pt-7 pb-6 ${className}`}>
-      <p className="text-gradient-brand text-[40px] font-semibold leading-[56px] tracking-[-0.02em]">{value}</p>
+      <p className="text-gradient-brand text-[40px] font-semibold leading-[56px] tracking-[-0.02em]">
+        <CountUp value={value} />
+      </p>
       <BracketLabel>{label}</BracketLabel>
     </div>
   );

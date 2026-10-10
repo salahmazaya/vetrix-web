@@ -3,17 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 
 /** True while the element is near the viewport, so WebGL scenes can pause offscreen. */
-export function useInView<T extends Element>(rootMargin = "200px") {
+export function useInView<T extends Element>(rootMargin = "200px", once = false) {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { rootMargin });
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        // Entrance animations only need to happen once
+        if (once && entry.isIntersecting) io.disconnect();
+      },
+      { rootMargin },
+    );
     io.observe(el);
     return () => io.disconnect();
-  }, [rootMargin]);
+  }, [rootMargin, once]);
 
   return { ref, inView };
 }

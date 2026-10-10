@@ -26,7 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${sora.variable} ${poppins.variable}`}>
+    // Browser extensions can add attributes to <html> before React loads; ignore those differences
+    <html lang="en" className={`${sora.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

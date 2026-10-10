@@ -38,7 +38,7 @@ const numberClip = { WebkitBackgroundClip: "text", backgroundClip: "text", color
  * to the middle of the screen) turns a card dark with the glowing blue number from the design.
  */
 export function EdgeCards() {
-  const { ref, inView } = useInView<HTMLDivElement>("-80px");
+  const { ref, inView } = useInView<HTMLDivElement>("-80px", true);
   const [touchActive, setTouchActive] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
 

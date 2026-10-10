@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { Logo } from "../ui/Logo";
+import { Reveal } from "../motion/Reveal";
 
 const columns = [
   {
@@ -79,8 +80,10 @@ export function Footer() {
     <footer className="bg-night-gradient relative overflow-hidden text-[#e4e4e4]">
       <BinaryPattern tone="dark" className="absolute -top-14 -left-16 w-56 opacity-60" />
       <BinaryPattern tone="dark" className="absolute -top-16 right-[-60px] w-56 opacity-60" />
+      {/* A thin line of light runs along the top edge */}
+      <span aria-hidden="true" className="footer-line absolute inset-x-0 top-0 h-px" />
       <div className="relative mx-auto grid max-w-[1120px] gap-12 px-4 pt-10 pb-16 sm:grid-cols-2 md:px-8 lg:grid-cols-4 lg:px-0">
-        <div className="flex max-w-[245px] flex-col gap-8">
+        <Reveal className="flex max-w-[245px] flex-col gap-8">
           <Logo className="h-[57px] w-[157px]" />
           <p className="text-base leading-normal">Building the intelligent systems that scale your business.</p>
           <ul className="flex items-center gap-3">
@@ -89,7 +92,7 @@ export function Footer() {
                 <a
                   href={s.href}
                   aria-label={s.label}
-                  className="flex size-8 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_2px_rgba(186,150,224,0.1)] transition-colors hover:bg-brand-bright"
+                  className="flex size-8 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_2px_rgba(186,150,224,0.1)] transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:bg-brand-bright hover:shadow-[0_8px_18px_-4px_rgba(0,141,210,0.7)]"
                 >
                   <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
                     {s.icon}
@@ -98,20 +101,20 @@ export function Footer() {
               </li>
             ))}
           </ul>
-        </div>
-        {columns.map((col) => (
-          <div key={col.title} className="flex flex-col gap-8">
+        </Reveal>
+        {columns.map((col, i) => (
+          <Reveal key={col.title} delay={(i + 1) * 100} className="flex flex-col gap-8">
             <p className="text-xl font-medium text-sky">{col.title}</p>
             <ul className="flex flex-col gap-6 text-base">
               {col.links.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href} className="transition-colors hover:text-white">
+                  <Link href={l.href} className="footer-link transition-colors hover:text-white">
                     {l.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
         ))}
       </div>
     </footer>

@@ -2,6 +2,14 @@ import { Globe } from "../three/Globe";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
 import { StatBadge } from "../ui/StatBadge";
+import { Reveal } from "../motion/Reveal";
+
+const stats = [
+  { value: "85%", label: "Workflows Automated", position: "lg:top-[200px] lg:left-0" },
+  { value: "4x", label: "Operational Speedup", position: "lg:top-[60px] lg:left-[277px]" },
+  { value: "99.9%", label: "System Reliability", position: "lg:top-[60px] lg:right-[277px]" },
+  { value: "150+", label: "Custom Systems Delivered", position: "lg:top-[200px] lg:right-0" },
+];
 
 export function ProvenImpact() {
   return (
@@ -17,10 +25,13 @@ export function ProvenImpact() {
 
         {/* Stats: scattered around the globe on desktop, a simple grid on small screens */}
         <div className="relative z-10 mt-10 grid gap-4 sm:grid-cols-2 lg:mt-0 lg:block lg:h-[300px]">
-          <StatBadge value="85%" label="Workflows Automated" className="lg:absolute lg:top-[200px] lg:left-0 lg:w-[262px]" />
-          <StatBadge value="4x" label="Operational Speedup" className="lg:absolute lg:top-[60px] lg:left-[277px] lg:w-[262px]" />
-          <StatBadge value="99.9%" label="System Reliability" className="lg:absolute lg:top-[60px] lg:right-[277px] lg:w-[262px]" />
-          <StatBadge value="150+" label="Custom Systems Delivered" className="lg:absolute lg:top-[200px] lg:right-0 lg:w-[262px]" />
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 120} className={`lg:absolute lg:w-[262px] ${s.position}`}>
+              <div className="stat-bob" style={{ animationDelay: `${i * -1.3}s` }}>
+                <StatBadge value={s.value} label={s.label} className="stat-card" />
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
 
