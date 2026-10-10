@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Sora } from "next/font/google";
+import { SiteLoader } from "@/components/layout/SiteLoader";
 import "./globals.css";
 
 const sora = Sora({
@@ -28,7 +29,10 @@ export default function RootLayout({
   return (
     // Browser extensions can add attributes to <html> before React loads; ignore those differences
     <html lang="en" className={`${sora.variable} ${poppins.variable}`} suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <SiteLoader />
+        {children}
+      </body>
     </html>
   );
 }
