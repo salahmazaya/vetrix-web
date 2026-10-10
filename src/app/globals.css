@@ -271,3 +271,89 @@ body {
     transform: none;
   }
 }
+
+/* The Vetrix Edge cards: light by default, dark with a blue number on hover */
+.edge-card {
+  opacity: 0;
+  transform: translateY(36px) scale(0.98);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s ease;
+}
+.edge-grid[data-visible="true"] .edge-card {
+  opacity: 1;
+  transform: none;
+}
+.edge-dark,
+.edge-spotlight,
+.edge-binary,
+.edge-number-glow {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.edge-spotlight {
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 141, 210, 0.22), transparent 70%);
+}
+.edge-title {
+  color: var(--color-ink);
+  transition: color 0.5s ease;
+}
+.edge-body {
+  color: #464646;
+  transition: color 0.5s ease;
+}
+.edge-number {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.edge-number > span:first-child {
+  transition: opacity 0.6s ease;
+}
+
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) {
+  box-shadow: 0 24px 60px -24px rgba(0, 40, 90, 0.55);
+  transition-delay: 0ms !important;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) :is(.edge-dark, .edge-spotlight, .edge-number-glow) {
+  opacity: 1;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-binary {
+  opacity: 0.8;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-number > span:first-child {
+  opacity: 0;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-number {
+  transform: translateY(-8px);
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-title {
+  color: #fff;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-body {
+  color: #ddd;
+}
+.edge-card:is(:hover, :focus-visible, [data-active="true"]) .edge-binary text {
+  animation: edge-flicker 2.4s ease-in-out infinite;
+}
+.edge-binary text:nth-child(odd) {
+  animation-delay: 0.6s;
+}
+.edge-binary text:nth-child(3n) {
+  animation-delay: 1.2s;
+}
+@keyframes edge-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-card {
+    opacity: 1;
+    transform: none;
+  }
+}
