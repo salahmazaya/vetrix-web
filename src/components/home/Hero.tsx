@@ -21,15 +21,15 @@ export function Hero() {
 
       <div className="flex max-w-[636px] flex-col items-center gap-8 text-center">
         <div className="flex flex-col gap-6">
-          <h1 className="text-[34px] leading-tight font-semibold text-white md:text-[42px]">
+          <h1 className="hero-rise text-[34px] leading-tight font-semibold text-white md:text-[42px]">
             The Core of Smart Digital Transformation.
           </h1>
-          <p className="text-base leading-normal text-[#f9f9f9]">
+          <p className="hero-rise text-base leading-normal text-[#f9f9f9] [animation-delay:150ms]">
             Vetrix builds reliable websites, CRM systems, automation tools, and intelligent software solutions that
             help businesses operate smarter, scale faster, and innovate with confidence.
           </p>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="hero-rise flex flex-wrap items-center justify-center gap-4 [animation-delay:300ms]">
           <PillButton href="/contact">Start Your Project</PillButton>
           <PillButton href="/solutions" variant="ghost">
             Explore Solutions
