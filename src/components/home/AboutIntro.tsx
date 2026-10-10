@@ -3,29 +3,7 @@ import { Reveal } from "../motion/Reveal";
 import { ScrollWords } from "../motion/ScrollWords";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { PillButton } from "../ui/PillButton";
-
-const pills = [
-  { label: "Custom CRMs", color: "#f97316" },
-  { label: "Smart Automation", color: "#8b5cf6" },
-  { label: "Scalable Code", color: "#22c55e" },
-  { label: "Data Insights", color: "#3b82f6" },
-  { label: "Increased Output", color: "#ef4444" },
-  { label: "Super-Brain", color: "#eab308" },
-  { label: "Style Variations", color: "#d946ef" },
-];
-
-const intro = [
-  { text: "We're a passionate team of " },
-  { text: "innovators obsessed with", highlight: true },
-  { text: " using AI to streamline business operations. " },
-  { text: "We believe", highlight: true },
-  { text: " intelligent software can revolutionize how enterprises scale, " },
-  { text: "making", highlight: true },
-  { text: " custom automation and reliable systems " },
-  { text: "faster and", highlight: true },
-  { text: " more " },
-  { text: "accessible", highlight: true },
-];
+import type { Home } from "@/payload-types";
 
 function Spark({ color }: { color: string }) {
   return (
@@ -39,7 +17,7 @@ function Spark({ color }: { color: string }) {
 }
 
 /** Dashed connector under the pills, with light running along it and a cursor pointing at the result. */
-function Connector() {
+function Connector({ label }: { label: string }) {
   const path = "M8 0 V30 a14 14 0 0 0 14 14 H538 a14 14 0 0 0 14 -14 V0";
   return (
     <div className="relative mx-auto hidden h-[110px] max-w-[560px] md:block" aria-hidden="true">
@@ -55,14 +33,15 @@ function Connector() {
           <path d="M4 2l15 9-6.5 1.6L16 20l-3 1.4-3.4-7.4L4 18z" fill="#0a0f2c" stroke="#e6ecff" strokeWidth="1.2" />
         </svg>
         <span className="mt-5 rounded-full border border-white/25 bg-[#0b1430]/80 px-3 py-1 font-poppins text-[13px] text-white/85 backdrop-blur">
-          You will access
+          {label}
         </span>
       </div>
     </div>
   );
 }
 
-export function AboutIntro() {
+export function AboutIntro({ content }: { content: Home["about"] }) {
+  const intro = (content.intro ?? []).map((p) => ({ text: p.text, highlight: p.highlight ?? false }));
   return (
     <section className="bg-night-gradient relative isolate overflow-hidden px-4 pt-[105px] pb-24 md:min-h-[866px]">
       <Image
@@ -96,13 +75,13 @@ export function AboutIntro() {
 
       <div className="relative mx-auto flex max-w-[1014px] flex-col items-center gap-4 pt-[31px] text-center">
         <Reveal as="p" className="text-xl font-medium text-brand-bright">
-          About Vetrix
+          {content.eyebrow}
         </Reveal>
         <div className="flex flex-col items-center gap-10">
           <ScrollWords parts={intro} className="text-[22px] leading-[1.55] md:text-[30px] md:leading-[48px]" />
           <Reveal delay={150}>
-            <PillButton href="/about" className="!py-2 !px-4 text-[18px]">
-              More About Us
+            <PillButton href={content.button.href} className="!py-2 !px-4 text-[18px]">
+              {content.button.label}
             </PillButton>
           </Reveal>
         </div>
@@ -110,10 +89,10 @@ export function AboutIntro() {
 
       <div className="relative mx-auto mt-[76px] max-w-[768px]">
         <ul className="flex flex-wrap justify-center gap-[18px] font-poppins">
-          {pills.map((p, i) => (
+          {content.pills?.map((p, i) => (
             <Reveal
               as="li"
-              key={p.label}
+              key={p.id ?? p.label}
               delay={i * 80}
               className="about-pill flex h-[38px] items-center gap-3 rounded-full border border-[#393d64]/70 bg-[#091223] px-5 text-sm text-[#f4f7ff]"
             >
@@ -122,7 +101,7 @@ export function AboutIntro() {
             </Reveal>
           ))}
         </ul>
-        <Connector />
+        <Connector label={content.accessLabel} />
       </div>
     </section>
   );

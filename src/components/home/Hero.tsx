@@ -1,7 +1,8 @@
 import { HeroWave } from "../three/HeroWave";
 import { PillButton } from "../ui/PillButton";
+import type { Home } from "@/payload-types";
 
-export function Hero() {
+export function Hero({ content }: { content: Home["hero"] }) {
   return (
     <section className="relative isolate flex min-h-[760px] items-start justify-center overflow-hidden bg-[#050d24] px-4 pt-[200px] md:min-h-[935px] md:pt-[231px]">
       {/* Deep navy backdrop with the blue glow the stock photo used to provide */}
@@ -22,17 +23,16 @@ export function Hero() {
       <div className="flex max-w-[636px] flex-col items-center gap-8 text-center">
         <div className="flex flex-col gap-6">
           <h1 className="hero-rise text-[34px] leading-tight font-semibold text-white md:text-[42px]">
-            The Core of Smart Digital Transformation.
+            {content.title}
           </h1>
           <p className="hero-rise text-base leading-normal text-[#f9f9f9] [animation-delay:150ms]">
-            Vetrix builds reliable websites, CRM systems, automation tools, and intelligent software solutions that
-            help businesses operate smarter, scale faster, and innovate with confidence.
+            {content.description}
           </p>
         </div>
         <div className="hero-rise flex flex-wrap items-center justify-center gap-4 [animation-delay:300ms]">
-          <PillButton href="/contact">Start Your Project</PillButton>
-          <PillButton href="/solutions" variant="ghost">
-            Explore Solutions
+          <PillButton href={content.primaryButton.href}>{content.primaryButton.label}</PillButton>
+          <PillButton href={content.secondaryButton.href} variant="ghost">
+            {content.secondaryButton.label}
           </PillButton>
         </div>
       </div>

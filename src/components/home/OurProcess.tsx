@@ -1,8 +1,14 @@
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
-import { ProcessDiagram } from "./ProcessDiagram";
+import { ProcessDiagram, type ProcessTile } from "./ProcessDiagram";
+import { mediaSrc } from "@/lib/cms";
+import type { Home, Media } from "@/payload-types";
 
-export function OurProcess() {
+type Tile = { name: string; logo: number | Media; highlighted?: boolean | null };
+
+const toTile = (t: Tile): ProcessTile => ({ name: t.name, src: mediaSrc(t.logo)?.src ?? "", on: t.highlighted ?? false });
+
+export function OurProcess({ content }: { content: Home["process"] }) {
   return (
     <section className="bg-night-gradient relative overflow-hidden px-4 pt-[54px] pb-24 md:px-8 lg:min-h-[1018px]">
       <BinaryPattern tone="dark" className="absolute top-0 -left-2 w-40" />
@@ -12,11 +18,20 @@ export function OurProcess() {
       <div className="relative mx-auto flex max-w-[1120px] flex-col gap-[27px]">
         <SectionHeading
           tone="dark"
-          eyebrow="Our Process"
-          title="From Logic to Launch"
-          description="We don't just write code; we build the future of your operations. Our step-by-step process ensures your custom CRM, website, or automation tool is built to last."
+          eyebrow={content.eyebrow}
+          title={content.title}
+          description={content.description ?? undefined}
         />
-        <ProcessDiagram />
+        <ProcessDiagram
+          content={{
+            stages: content.stages?.map((s) => s.label) ?? [],
+            categories: content.categories?.map((c) => c.label) ?? [],
+            sources: content.sources?.map(toTile) ?? [],
+            reef: { title: content.reef.title, chips: content.reef.chips?.map((c) => c.label) ?? [] },
+            toolsTitle: content.toolsTitle,
+            groups: content.groups?.map((g) => ({ label: g.label, tiles: g.tiles?.map(toTile) ?? [] })) ?? [],
+          }}
+        />
       </div>
     </section>
   );

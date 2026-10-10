@@ -1,5 +1,6 @@
 import { Orb } from "../three/Orb";
 import { VeMark } from "../ui/VeMark";
+import type { Home } from "@/payload-types";
 
 // Everything is laid out in the artwork's own 556 x 820 space so it scales as one piece
 const W = 556;
@@ -40,7 +41,8 @@ function FeatureIcon({ kind }: { kind: "flow" | "insight" }) {
 }
 
 /** "The Intelligent Heart of Your Business" card, rebuilt from the artwork so every part is live. */
-export function BentoHeart() {
+export function BentoHeart({ content }: { content: Home["meetVe"]["heart"] }) {
+  const [flow, insight] = content.features ?? [];
   return (
     <div className="@container relative aspect-[556/820] w-full">
       <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 h-full w-full" aria-hidden="true">
@@ -120,7 +122,7 @@ export function BentoHeart() {
       <div className="absolute inset-x-0 top-[4.6%] flex flex-col items-center gap-[1.4cqw]">
         <VeMark className="w-[7cqw] text-white" />
         <h3 className="max-w-[80%] text-center text-[6.1cqw] leading-[1.32] font-semibold text-white">
-          The Intelligent Heart of Your Business.
+          {content.title}
         </h3>
       </div>
 
@@ -140,21 +142,11 @@ export function BentoHeart() {
 
       {/* Lower feature cards */}
       {[
-        {
-          kind: "flow" as const,
-          left: 0,
-          title: "Smart Workflows",
-          body: "Explore multiple operational paths and automated decision-making",
-        },
-        {
-          kind: "insight" as const,
-          left: 293,
-          title: "Predictive Insights",
-          body: "Extract key data points and boost precision with deep analysis.",
-        },
+        { kind: "flow" as const, left: 0, ...flow },
+        { kind: "insight" as const, left: 293, ...insight },
       ].map((f) => (
         <div
-          key={f.title}
+          key={f.kind}
           className="absolute flex flex-col items-start gap-[1.6cqw] px-[5.6cqw]"
           style={{ left: pct(f.left, W), width: pct(263, W), top: pct(622, H) }}
         >

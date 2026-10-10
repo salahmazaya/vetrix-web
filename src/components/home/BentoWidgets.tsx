@@ -23,7 +23,7 @@ export function AiToggle() {
 }
 
 /** Glassy "Generate" button with a light sweeping across it and a cursor that clicks it. */
-export function GenerateButton() {
+export function GenerateButton({ label }: { label: string }) {
   return (
     <div className="relative rounded-full bg-white/60 p-[7px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.9),0_10px_30px_-10px_rgba(0,141,210,0.5)]">
       <span className="generate-btn relative flex h-[50px] items-center gap-3 overflow-hidden rounded-full bg-gradient-to-b from-[#2aa9ef] to-[#0a7cd0] px-7 text-[26px] text-white">
@@ -36,7 +36,7 @@ export function GenerateButton() {
             stroke="none"
           />
         </svg>
-        Generate
+        {label}
         <span className="generate-shine pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 skew-x-[-20deg] bg-white/35 blur-[2px]" />
       </span>
       <svg

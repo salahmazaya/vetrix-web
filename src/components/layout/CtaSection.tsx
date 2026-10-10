@@ -1,9 +1,10 @@
 import { Reveal } from "../motion/Reveal";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { PillButton } from "../ui/PillButton";
+import type { Cta } from "@/payload-types";
 
 /** "Ready to Scale?" band shown above the footer on every page. */
-export function CtaSection() {
+export function CtaSection({ content }: { content: Cta }) {
   return (
     <section className="relative isolate overflow-hidden bg-white px-4 py-24">
       {/* Soft brand-coloured lights drifting behind the text */}
@@ -19,22 +20,28 @@ export function CtaSection() {
       <div className="relative mx-auto flex max-w-[673px] flex-col items-center gap-7 text-center">
         <div className="flex flex-col items-center gap-5">
           <Reveal as="p" className="eyebrow-shine text-xl leading-normal font-medium text-brand-bright">
-            Ready to Scale?
+            {content.eyebrow}
           </Reveal>
           <Reveal delay={100}>
             <h2 className="cta-title-shine max-w-[492px] text-[30px] leading-[1.35] font-semibold tracking-[-0.02em] sm:text-[38px] sm:leading-[62px]">
-              Let’s Build Your <br className="max-sm:hidden" />
-              Intelligent Software.
+              {content.title.split("\n").map((line, i) => (
+                <span key={i}>
+                  {i > 0 && <br className="max-sm:hidden" />}
+                  {i > 0 && " "}
+                  {line}
+                </span>
+              ))}
             </h2>
           </Reveal>
-          <Reveal as="p" delay={200} className="text-sm leading-normal text-[#737373]">
-            Schedule a brief discovery call to see how Vetrix can automate your workflows, build your custom systems,
-            and accelerate your growth.
-          </Reveal>
+          {content.description && (
+            <Reveal as="p" delay={200} className="text-sm leading-normal text-[#737373]">
+              {content.description}
+            </Reveal>
+          )}
         </div>
         <Reveal delay={300}>
-          <PillButton href="/contact" variant="brand" className="cta-button">
-            Book a Free Consultation
+          <PillButton href={content.button.href} variant="brand" className="cta-button">
+            {content.button.label}
           </PillButton>
         </Reveal>
       </div>

@@ -3,11 +3,23 @@ import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
 import { Reveal } from "../motion/Reveal";
 import { TiltCard } from "../motion/TiltCard";
+import { mediaSrc } from "@/lib/cms";
+import type { Home } from "@/payload-types";
 
-const copy =
-  "Every custom system we build comes with an intelligent AI assistant. From automating tasks to analyzing CRM data, V-Core is your on-demand digital partner.";
+const sideCard = "linear-gradient(180deg, #0c1226 0%, #14161f 45%, #121622 100%)";
+const middleCard = "linear-gradient(180deg, #132a49 0%, #181c27 100%)";
 
-export function ScaleSmarter() {
+/** Keeps the line breaks typed in the admin */
+function Lines({ text }: { text: string }) {
+  return text.split("\n").map((line, i) => (
+    <span key={i}>
+      {i > 0 && <br />}
+      {line}
+    </span>
+  ));
+}
+
+export function ScaleSmarter({ content }: { content: Home["scale"] }) {
   return (
     <section className="bg-night-gradient relative overflow-hidden px-4 pt-[103px] pb-24 md:px-8">
       <BinaryPattern tone="dark" className="absolute top-0 -left-2 w-40" />
@@ -16,70 +28,51 @@ export function ScaleSmarter() {
       <div className="relative mx-auto flex max-w-[1120px] flex-col gap-8">
         <SectionHeading
           tone="dark"
-          eyebrow="Your Next Big Leap"
-          title="Scale Smarter, Not Harder"
-          description="Ready to leave manual tasks behind? Let’s design the custom CRM, smart automations, and AI tools your team needs to move faster and grow seamlessly."
+          eyebrow={content.eyebrow}
+          title={content.title}
+          description={content.description ?? undefined}
         />
 
         <div className="grid justify-items-center gap-6 md:grid-cols-3 md:gap-[33px]">
-          <Reveal delay={0} className="w-full max-w-[351px]">
-            <TiltCard
-              className="relative flex h-[650px] flex-col overflow-hidden rounded-[34px] border border-white/10 px-[30px] pt-10 text-center scale-card"
-              style={{ background: "linear-gradient(180deg, #0c1226 0%, #14161f 45%, #121622 100%)" }}
-            >
-              <h3 className="text-2xl leading-[34.5px] font-medium text-white">
-                Automated workflows that feel like magic.
-              </h3>
-              <p className="mt-4 text-sm leading-[1.6] text-[#e1e1e1]">{copy}</p>
-              <Image
-                src="/images/card-assistant.webp"
-                alt="The Ve assistant waving next to an Ask Ve prompt bar."
-                width={351}
-                height={380}
-                className="scale-art absolute inset-x-0 bottom-0 h-auto w-full [mask-image:linear-gradient(to_bottom,transparent,black_12%)]"
-              />
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={150} className="w-full max-w-[351px]">
-            <TiltCard
-              className="relative flex h-[650px] flex-col justify-end overflow-hidden rounded-[34px] border border-white/10 px-5 pb-10 text-center scale-card"
-              style={{ background: "linear-gradient(180deg, #132a49 0%, #181c27 100%)" }}
-            >
-              <Image
-                src="/images/card-phone.webp"
-                alt="Phone showing the Ve assistant asking how it can help."
-                width={351}
-                height={390}
-                className="scale-art absolute inset-x-0 top-0 h-auto w-full [mask-image:linear-gradient(to_top,transparent,black_10%)]"
-              />
-              <h3 className="relative text-[23px] leading-[34.5px] text-white">
-                Let Ve
-                <br />
-                run your operations.
-              </h3>
-              <p className="relative mt-6 text-sm leading-6 text-[#e1e1e1]">{copy}</p>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={300} className="w-full max-w-[351px]">
-            <TiltCard
-              className="relative flex h-[650px] flex-col overflow-hidden rounded-[34px] border border-white/10 px-[30px] pt-10 text-center scale-card"
-              style={{ background: "linear-gradient(180deg, #0c1226 0%, #14161f 45%, #121622 100%)" }}
-            >
-              <h3 className="text-2xl leading-[34.5px] font-medium text-white">
-                Enterprise-grade security and reliability.
-              </h3>
-              <p className="mt-4 text-sm leading-6 text-[#e1e1e1]">{copy}</p>
-              <Image
-                src="/images/card-integrations.webp"
-                alt="Ve connected to design and automation tools."
-                width={351}
-                height={380}
-                className="scale-art absolute inset-x-0 bottom-0 h-auto w-full [mask-image:linear-gradient(to_bottom,transparent,black_12%)]"
-              />
-            </TiltCard>
-          </Reveal>
+          {content.cards?.map((card, i) => {
+            const image = mediaSrc(card.image);
+            // The middle card flips the layout: picture on top, text at the bottom
+            const middle = i === 1;
+            return (
+              <Reveal key={card.id ?? i} delay={i * 150} className="w-full max-w-[351px]">
+                <TiltCard
+                  className={`scale-card relative flex h-[650px] flex-col overflow-hidden rounded-[34px] border border-white/10 text-center ${
+                    middle ? "justify-end px-5 pb-10" : "px-[30px] pt-10"
+                  }`}
+                  style={{ background: middle ? middleCard : sideCard }}
+                >
+                  {image && (
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      width={image.width || 351}
+                      height={image.height || 380}
+                      className={`scale-art absolute inset-x-0 h-auto w-full ${
+                        middle
+                          ? "top-0 [mask-image:linear-gradient(to_top,transparent,black_10%)]"
+                          : "bottom-0 [mask-image:linear-gradient(to_bottom,transparent,black_12%)]"
+                      }`}
+                    />
+                  )}
+                  <h3
+                    className={`relative leading-[34.5px] text-white ${
+                      middle ? "text-[23px]" : "text-2xl font-medium"
+                    }`}
+                  >
+                    <Lines text={card.title} />
+                  </h3>
+                  <p className={`relative text-sm text-[#e1e1e1] ${middle ? "mt-6 leading-6" : "mt-4 leading-[1.6]"}`}>
+                    {card.body}
+                  </p>
+                </TiltCard>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>

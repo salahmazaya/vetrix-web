@@ -17,11 +17,23 @@ The pages as designed in Figma, with 3D touches:
 
 Phase 2 will grow the `three/` components into a fully 3D experience.
 
+## Content (Payload CMS)
+
+Every Home section, the navigation, the call-to-action band and the footer are edited in the admin at
+`/admin`. Payload runs inside this Next.js app (`src/app/(payload)`), with its config in `src/payload.config.ts`
+and the fields in `src/payload/globals`.
+
+- **Database:** Postgres (Neon). Copy `.env.example` to `.env` and set `DATABASE_URL` and `PAYLOAD_SECRET`.
+- **First start:** the admin is filled with the site's current content and images (`src/payload/seed`), then
+  `/admin` asks you to create the first user.
+- **Edits** show on the site straight away: each save clears that global's cached copy.
+- After changing fields, run `npm run generate:types` to refresh `src/payload-types.ts`.
+
 ## Develop
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
+npm run dev     # http://localhost:3000, admin at /admin
 npm run build   # production build
 npm run lint
 ```

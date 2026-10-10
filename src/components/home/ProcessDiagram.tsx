@@ -8,113 +8,34 @@ import { useInView } from "../three/useInView";
 const W = 1120;
 const H = 692;
 const HUB = { x: 558, y: 345 };
-const STAGES = ["COLLECT", "NORMALIZE", "DENOISE", "TRANSFORM", "ROUTE", "ENRICH", "GOVERN"];
 const STAGE_STEP = 1.6; // seconds each stage stays lit
 
 const x = (v: number) => `${(v / W) * 100}%`;
 const y = (v: number) => `${(v / H) * 100}%`;
 
-// Source apps on the left: 9 rows x 3 columns. `on` marks the tiles lit in the design.
+// Source apps on the left: 9 rows x 3 columns
 const TILE_COLUMNS = [41, 128, 215];
 const TILE_ROWS = Array.from({ length: 9 }, (_, i) => 74 + Math.round(i * 61.75));
-const TILES: { logo: string; name: string; on?: boolean }[][] = [
-  [
-    { logo: "oracle", name: "Oracle" },
-    { logo: "mailchimp", name: "Mailchimp", on: true },
-    { logo: "actuators", name: "Actuators" },
-  ],
-  [
-    { logo: "linux", name: "Linux", on: true },
-    { logo: "feather", name: "Apache" },
-    { logo: "sumo", name: "Sumo Logic" },
-  ],
-  [
-    { logo: "cisco", name: "Cisco" },
-    { logo: "wiz", name: "Wiz" },
-    { logo: "sap", name: "SAP", on: true },
-  ],
-  [
-    { logo: "workday", name: "Workday", on: true },
-    { logo: "kubernetes", name: "Kubernetes" },
-    { logo: "mysql", name: "MySQL", on: true },
-  ],
-  [
-    { logo: "quickbooks", name: "QuickBooks" },
-    { logo: "aws", name: "AWS" },
-    { logo: "crowdstrike", name: "CrowdStrike" },
-  ],
-  [
-    { logo: "sensors", name: "Sensors" },
-    { logo: "paloalto", name: "Palo Alto Networks" },
-    { logo: "zscaler", name: "Zscaler" },
-  ],
-  [
-    { logo: "wireshark", name: "Wireshark" },
-    { logo: "google", name: "Google", on: true },
-    { logo: "dropbox", name: "Dropbox", on: true },
-  ],
-  [
-    { logo: "sunburst", name: "Monitoring" },
-    { logo: "salesforce", name: "Salesforce" },
-    { logo: "cloudflare", name: "Cloudflare" },
-  ],
-  [
-    { logo: "custom-apps", name: "Custom apps", on: true },
-    { logo: "ibm", name: "IBM", on: true },
-    { logo: "hex", name: "Integrations" },
-  ],
-];
-const CATEGORIES = [
-  { label: "Security", y: 140 },
-  { label: "Application", y: 275 },
-  { label: "IoT/OT", y: 408 },
-  { label: "Observability", y: 535 },
-];
+const CATEGORY_Y = [140, 275, 408, 535];
 
-// Destination groups inside "Third Party Tools"
-const GROUPS: { label: string; y: number; tiles: { logo: string; name: string; on?: boolean }[] }[] = [
-  {
-    label: "SIEM",
-    y: 270,
-    tiles: [
-      { logo: "siem-1", name: "SIEM" },
-      { logo: "siem-2", name: "QRadar" },
-      { logo: "splunk", name: "Splunk" },
-    ],
-  },
-  {
-    label: "Observability",
-    y: 371,
-    tiles: [
-      { logo: "obs-1", name: "Datadog" },
-      { logo: "obs-mc", name: "Monte Carlo" },
-      { logo: "obs-3", name: "Observability", on: true },
-    ],
-  },
-  {
-    label: "Storage",
-    y: 473,
-    tiles: [
-      { logo: "storage-1", name: "Azure" },
-      { logo: "storage-2", name: "S3" },
-      { logo: "gcloud", name: "Google Cloud", on: true },
-    ],
-  },
-  {
-    label: "Datalakes",
-    y: 575,
-    tiles: [
-      { logo: "databricks", name: "Databricks", on: true },
-      { logo: "snowflake", name: "Snowflake" },
-      { logo: "db", name: "Database" },
-    ],
-  },
-];
+// Destination groups inside the tools panel
+const GROUP_Y = [270, 371, 473, 575];
 const GROUP_TILE_X = [853, 936, 1018];
+
+export type ProcessTile = { name: string; src: string; on: boolean };
+export type ProcessContent = {
+  stages: string[];
+  categories: string[];
+  /** 27 tiles, row by row */
+  sources: ProcessTile[];
+  reef: { title: string; chips: string[] };
+  toolsTitle: string;
+  groups: { label: string; tiles: ProcessTile[] }[];
+};
 
 // Streams: one per source row into the hub, one per destination out of it
 const INPUT_ROWS = TILE_ROWS.map((t) => t + 26);
-const OUTPUTS = [102, ...GROUPS.map((g) => g.y)];
+const OUTPUTS = [102, ...GROUP_Y];
 
 // Rounded so server and browser render identical numbers
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -122,10 +43,10 @@ const round = (n: number) => Math.round(n * 100) / 100;
 const inputPath = (y: number) => `M296 ${y} C ${370} ${y}, ${360} ${HUB.y}, ${428} ${HUB.y}`;
 const outputPath = (y: number) => `M688 ${HUB.y} C ${770} ${HUB.y}, ${750} ${y}, ${832} ${y}`;
 
-function Logo({ logo, name }: { logo: string; name: string }) {
+function Logo({ src, name }: ProcessTile) {
   return (
     <Image
-      src={`/images/process/${logo}.webp`}
+      src={src}
       alt={name}
       width={64}
       height={40}
@@ -135,7 +56,8 @@ function Logo({ logo, name }: { logo: string; name: string }) {
 }
 
 /** The Ve hub diagram, built from real elements: data streams in from your apps, through Ve, and out to your tools. */
-export function ProcessDiagram() {
+export function ProcessDiagram({ content }: { content: ProcessContent }) {
+  const { stages, groups } = content;
   const { ref, inView } = useInView<HTMLDivElement>();
   const stage = useRef<HTMLDivElement>(null);
 
@@ -166,24 +88,25 @@ export function ProcessDiagram() {
           <div aria-hidden="true" className="process-backdrop absolute inset-0 rounded-[3cqw]" />
 
           {/* Source categories */}
-          {CATEGORIES.map((c) => (
+          {content.categories.map((label, i) => (
             <span
-              key={c.label}
+              key={i}
               className="absolute -translate-x-1/2 -translate-y-1/2 -rotate-90 text-[0.95cqw] font-medium tracking-[0.28em] whitespace-nowrap text-[#41557c] uppercase"
-              style={{ left: x(17), top: y(c.y) }}
+              style={{ left: x(17), top: y(CATEGORY_Y[i % 4]) }}
             >
-              {c.label}
+              {label}
             </span>
           ))}
 
           {/* Source app tiles */}
           {TILE_ROWS.flatMap((ty, row) =>
             TILE_COLUMNS.map((tx, col) => {
-              const t = TILES[row][col];
+              const t = content.sources[row * 3 + col];
+              if (!t) return null;
               return (
                 <div
-                  key={t.logo}
-                  data-on={t.on ?? false}
+                  key={`${row}-${col}`}
+                  data-on={t.on}
                   className="process-tile-live group/tile absolute grid place-items-center rounded-[0.6cqw]"
                   style={
                     {
@@ -290,8 +213,8 @@ export function ProcessDiagram() {
               <circle r="112" fill="none" stroke="url(#hub-band)" strokeWidth="44" />
               <circle r="134" fill="none" stroke="#3a8ee0" strokeOpacity="0.35" strokeWidth="1" />
               <circle r="90" fill="none" stroke="#3a8ee0" strokeOpacity="0.35" strokeWidth="1" />
-              {STAGES.map((_, i) => {
-                const a = ((i / STAGES.length) * 360 - 90 + 360 / STAGES.length / 2) * (Math.PI / 180);
+              {stages.map((_, i) => {
+                const a = ((i / stages.length) * 360 - 90 + 360 / stages.length / 2) * (Math.PI / 180);
                 return (
                   <line
                     key={i}
@@ -305,17 +228,17 @@ export function ProcessDiagram() {
                 );
               })}
               <text className="process-stage-text" fontSize="11" letterSpacing="1.5">
-                {STAGES.map((word, i) => (
+                {stages.map((word, i) => (
                   <textPath
-                    key={word}
+                    key={i}
                     href="#stage-path"
-                    startOffset={`${(i / STAGES.length) * 100 + 100 / STAGES.length / 2}%`}
+                    startOffset={`${(i / stages.length) * 100 + 100 / stages.length / 2}%`}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     className="process-stage-word"
                     style={{
                       animationDelay: `${i * STAGE_STEP}s`,
-                      animationDuration: `${STAGES.length * STAGE_STEP}s`,
+                      animationDuration: `${stages.length * STAGE_STEP}s`,
                     }}
                   >
                     {word}
@@ -358,12 +281,12 @@ export function ProcessDiagram() {
             }
           >
             <p className="grid h-[27%] place-items-center border-b border-[#2c5d9c]/60 bg-[#10223f]/80 text-[1.25cqw] text-white/90">
-              Reef
+              {content.reef.title}
             </p>
             <div className="grid flex-1 grid-cols-2 gap-[0.8cqw] p-[0.8cqw]">
-              {["Visualization", "Reporting", "Ai Search", "Insights"].map((label, i) => (
+              {content.reef.chips.map((label, i) => (
                 <span
-                  key={label}
+                  key={i}
                   className={`process-chip grid place-items-center rounded-[0.5cqw] border border-white/8 bg-[#0d1628] text-[1.05cqw] ${
                     i % 2 ? "text-white/70" : "text-white"
                   }`}
@@ -389,7 +312,7 @@ export function ProcessDiagram() {
             }
           >
             <p className="grid h-[8.5%] place-items-center rounded-t-[0.8cqw] border-b border-[#2c5d9c]/60 bg-[#10223f]/80 text-[1.25cqw] text-white/90">
-              Third Party Tools
+              {content.toolsTitle}
             </p>
           </div>
           <svg
@@ -397,33 +320,33 @@ export function ProcessDiagram() {
             viewBox={`0 0 ${W} ${H}`}
             className="pointer-events-none absolute inset-0 h-full w-full"
           >
-            {GROUPS.map((g) => (
+            {GROUP_Y.slice(0, groups.length).map((gy) => (
               <path
-                key={g.label}
-                d={`M891 ${g.y + 21} V${g.y} H1056 V${g.y + 21} M974 ${g.y} V${g.y + 21}`}
+                key={gy}
+                d={`M891 ${gy + 21} V${gy} H1056 V${gy + 21} M974 ${gy} V${gy + 21}`}
                 fill="none"
                 stroke="#2b3b58"
                 strokeWidth="1.2"
               />
             ))}
           </svg>
-          {GROUPS.map((g, gi) => (
-            <div key={g.label}>
+          {groups.map((g, gi) => (
+            <div key={gi}>
               <span
                 className="process-group-label absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.4cqw] border border-[#5a7fae]/70 bg-[#0c1526] px-[0.8cqw] py-[0.15cqw] text-[1.05cqw] whitespace-nowrap text-white"
-                style={{ left: x(974), top: y(g.y), "--delay": `${2.2 + gi * 0.45}s` } as React.CSSProperties}
+                style={{ left: x(974), top: y(GROUP_Y[gi]), "--delay": `${2.2 + gi * 0.45}s` } as React.CSSProperties}
               >
                 {g.label}
               </span>
               {g.tiles.map((t, ti) => (
                 <div
-                  key={t.logo}
-                  data-on={t.on ?? false}
+                  key={ti}
+                  data-on={t.on}
                   className="process-tile-live absolute grid place-items-center rounded-[0.6cqw]"
                   style={
                     {
                       left: x(GROUP_TILE_X[ti]),
-                      top: y(g.y + 21),
+                      top: y(GROUP_Y[gi] + 21),
                       width: x(76),
                       height: y(45),
                       "--delay": `${2.2 + gi * 0.45 + ti * 0.15}s`,

@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "../ui/Logo";
 import { PillButton } from "../ui/PillButton";
-import { navLinks } from "./nav-links";
+import type { Header } from "@/payload-types";
 
 /** Floating glass navigation bar that sits on top of each page's dark header. */
-export function Navbar() {
+type NavbarProps = { links: NonNullable<Header["links"]>; button: Header["button"] };
+
+export function Navbar({ links, button }: NavbarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -33,8 +35,8 @@ export function Navbar() {
         </Link>
 
         <ul className="hidden items-center gap-[43px] text-base text-white lg:flex">
-          {navLinks.map((link) => (
-            <li key={link.href}>
+          {links.map((link) => (
+            <li key={link.id ?? link.href}>
               <Link
                 href={link.href}
                 aria-current={pathname === link.href ? "page" : undefined}
@@ -47,7 +49,7 @@ export function Navbar() {
         </ul>
 
         <div className="hidden lg:block">
-          <PillButton href="/contact">Start Your Project</PillButton>
+          <PillButton href={button.href}>{button.label}</PillButton>
         </div>
 
         <button
@@ -74,16 +76,16 @@ export function Navbar() {
           className="mx-auto mt-3 max-w-[1120px] rounded-3xl border border-white/10 bg-[#0a1232]/95 p-6 backdrop-blur-md lg:hidden"
         >
           <ul className="flex flex-col gap-5 text-lg text-white">
-            {navLinks.map((link) => (
-              <li key={link.href}>
+            {links.map((link) => (
+              <li key={link.id ?? link.href}>
                 <Link href={link.href} className="block hover:text-sky" onClick={() => setOpen(false)}>
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <PillButton href="/contact" className="mt-6 w-full">
-            Start Your Project
+          <PillButton href={button.href} className="mt-6 w-full">
+            {button.label}
           </PillButton>
         </div>
       )}
