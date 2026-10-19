@@ -14,7 +14,9 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "db:adopt": "node scripts/adopt-database.mjs"
+    "db:adopt": "node scripts/adopt-database.mjs",
+    "db:export": "node scripts/export-database.mjs",
+    "db:import": "node scripts/import-database.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

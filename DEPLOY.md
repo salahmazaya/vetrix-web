@@ -40,6 +40,19 @@ against a Neon database created by `npm run dev`. To go live with that content:
    `C:\Mazaya\vetrix\media`) to the project root on the server. It holds every image the database
    points to.
 
+**Or receive the content as a file.** The content team runs `npm run db:export` on their PC. It makes a
+`vetrix-export` folder with `database.sql` (all the content and admin accounts) and `media/` (the images).
+They zip it and send it. On the server, with `DATABASE_URL` pointing at a new, empty database, and
+**before the first `npm start`** (otherwise the site fills itself with the default content):
+
+```bash
+npm run payload migrate                     # creates the empty tables
+npm run db:import -- ./vetrix-export        # fills them and copies the images into ./media
+```
+
+If the images were sent separately, put them in `media/` at the project root; `db:import` only needs
+`database.sql`.
+
 **Or start fresh.** On a new, empty database nothing needs preparing: the first start creates the tables
 and fills in the design's content and images.
 

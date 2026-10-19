@@ -44,3 +44,6 @@ next-env.d.ts
 /media
 
 !.env.example
+
+# Content exports (npm run db:export)
+/vetrix-export
