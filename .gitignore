@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# payload uploads (rebuilt by the seed from public/images)
+/media
+
+!.env.example
+
+# Content exports (npm run db:export)
+/vetrix-export
