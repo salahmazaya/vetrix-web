@@ -15,10 +15,33 @@ Copy `.env.example` to `.env` on the server (never commit it):
 
 | Variable | What it is |
 | --- | --- |
-| `DATABASE_URL` | Postgres connection string. Use a **new, empty database** for production. |
+| `DATABASE_URL` | Postgres connection string (see [Which database](#which-database)). |
 | `PAYLOAD_SECRET` | Long random string; signs admin logins. Generate one with `openssl rand -hex 32`. Keep it the same across deploys. |
 | `PAYLOAD_DISABLE_DEPENDENCY_CHECKER` | `true`. Turns off a dev-only Payload check that clashes with Next 16. |
 | `PORT` | Optional; the port `npm start` listens on (default 3000). |
+
+## Which database
+
+**Keep the content already entered (the usual case).** The content team has been editing in the admin
+against a Neon database created by `npm run dev`. To go live with that content:
+
+1. Make a copy of it for production, so local development never touches the live site:
+   - **Staying on Neon:** in the Neon console, *Branches → New branch* from the main branch. It copies
+     all the data instantly and gives a new connection string.
+   - **Your own Postgres:** `pg_dump --no-owner "<neon url>" > vetrix.sql`, then `psql "<server url>" < vetrix.sql`.
+2. Point `DATABASE_URL` at the copy and run, once:
+   ```bash
+   npm run db:adopt
+   ```
+   A database made by `npm run dev` doesn't record migrations, so production would try to create
+   tables that already exist (and stop at an interactive prompt). This marks the existing migrations
+   as applied. It changes nothing else.
+3. Copy the **`media/` folder** from the machine that ran the admin (the content team's PC,
+   `C:\Mazaya\vetrix\media`) to the project root on the server. It holds every image the database
+   points to.
+
+**Or start fresh.** On a new, empty database nothing needs preparing: the first start creates the tables
+and fills in the design's content and images.
 
 ## First deploy
 
@@ -28,12 +51,14 @@ npm run build      # the database must be reachable: pages are prerendered from 
 npm start          # or run it under pm2/systemd, see below
 ```
 
-What happens on the first start against an empty database, with no manual steps:
+What happens on the first start against an **empty** database, with no manual steps (an adopted
+database already has its tables and content, so both steps are skipped):
 
 1. **Tables are created** by the migrations in `src/migrations` (Payload runs them when it starts in production).
 2. **Content is filled in**: every page's text and the images from `public/images` are copied into the admin
    (`src/payload/seed`). Content that already exists is never overwritten.
-3. Open **`https://<domain>/admin`**. The first visit asks you to create the first admin account.
+3. Open **`https://<domain>/admin`**. The first visit asks you to create the first admin account
+   (an adopted database keeps its existing admin accounts).
 
 Put it behind your usual reverse proxy (nginx, Caddy…) with HTTPS. Example nginx block:
 
@@ -87,4 +112,5 @@ Locally, `npm run dev` syncs the database schema directly, so the migration is o
   adapter in `src/payload.config.ts` if you want a notification for each message.
 - **Image licence:** the "Core Identity" image on the About page came from the design with an Unsplash+
   watermark. Replace it from the admin with a licensed image before going live.
-- **Checks:** `npm run lint` and `npx tsc --noEmit` both pass; `npm run build` passes against an empty database.
+- **Checks:** `npm run lint` and `npx tsc --noEmit` both pass. `npm run build` and `npm start` pass both against an
+  empty database and against a copy of a `npm run dev` database after `npm run db:adopt`.
