@@ -19,15 +19,18 @@ Phase 2 will grow the `three/` components into a fully 3D experience.
 
 ## Content (Payload CMS)
 
-Every Home section, the navigation, the call-to-action band and the footer are edited in the admin at
-`/admin`. Payload runs inside this Next.js app (`src/app/(payload)`), with its config in `src/payload.config.ts`
+Every page (Home, AI Core, About, Solutions, Contact), the navigation, the FAQ, the call-to-action band and
+the footer are edited in the admin at `/admin`. Contact form messages land in **Messages**. Payload runs inside this Next.js app (`src/app/(payload)`), with its config in `src/payload.config.ts`
 and the fields in `src/payload/globals`.
 
 - **Database:** Postgres (Neon). Copy `.env.example` to `.env` and set `DATABASE_URL` and `PAYLOAD_SECRET`.
 - **First start:** the admin is filled with the site's current content and images (`src/payload/seed`), then
   `/admin` asks you to create the first user.
 - **Edits** show on the site straight away: each save clears that global's cached copy.
-- After changing fields, run `npm run generate:types` to refresh `src/payload-types.ts`.
+- After changing fields, run `npm run generate:types` to refresh `src/payload-types.ts`, then
+  `npm run payload migrate:create <name>` and commit the new file in `src/migrations`.
+
+Deploying to a server: see [DEPLOY.md](DEPLOY.md).
 
 ## Develop
 
@@ -44,6 +47,10 @@ npm run lint
 src/app/                 routes and global styles (design tokens in globals.css)
 src/components/layout/   navbar, footer, CTA band shared by every page
 src/components/home/     Home page sections
+src/components/inner/    shared pieces of the inner pages (blue header, FAQ, page shell)
+src/components/ai-core/  AI Core sections (likewise about/, solutions/, contact/)
+src/payload/             admin fields (globals, collections) and the first-start seed
+src/migrations/          database migrations, applied automatically in production
 src/components/three/    WebGL scenes (hero wave, orb) and 3D helpers
 src/components/ui/       small building blocks (buttons, headings, stat badges)
 public/images/           artwork exported from Figma

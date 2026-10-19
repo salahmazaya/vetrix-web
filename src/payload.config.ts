@@ -17,6 +17,7 @@ import { Footer } from "./payload/globals/Footer";
 import { Header } from "./payload/globals/Header";
 import { Home } from "./payload/globals/Home";
 import { Solutions } from "./payload/globals/Solutions";
+import { migrations } from "./migrations";
 import { seed } from "./payload/seed";
 
 const filename = fileURLToPath(import.meta.url);
@@ -33,7 +34,11 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
-  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URL || "" } }),
+  db: postgresAdapter({
+    pool: { connectionString: process.env.DATABASE_URL || "" },
+    // In production the tables are created and updated by these migrations when the server starts
+    prodMigrations: migrations,
+  }),
   sharp,
   // First start fills the admin with the site's current content
   onInit: seed,
