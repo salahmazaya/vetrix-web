@@ -1,12 +1,13 @@
 import type { Payload } from "payload";
 import { content } from "./content";
 import { seedContext as context, type Upload } from "./media";
+import { seedEn } from "./seedEn";
 
 /** Navigation, call-to-action band and footer */
 export async function seedSiteGlobals(payload: Payload) {
-  await payload.updateGlobal({ slug: "header", data: content.header, context });
-  await payload.updateGlobal({ slug: "cta", data: content.cta, context });
-  await payload.updateGlobal({ slug: "footer", data: content.footer, context });
+  await payload.updateGlobal({ slug: "header", data: seedEn(content.header), context });
+  await payload.updateGlobal({ slug: "cta", data: seedEn(content.cta), context });
+  await payload.updateGlobal({ slug: "footer", data: seedEn(content.footer), context });
 }
 
 export async function seedHome(payload: Payload, upload: Upload) {
@@ -33,7 +34,7 @@ export async function seedHome(payload: Payload, upload: Upload) {
   await payload.updateGlobal({
     slug: "home",
     context,
-    data: {
+    data: seedEn({
       ...c,
       meetVe: {
         ...c.meetVe,
@@ -41,6 +42,6 @@ export async function seedHome(payload: Payload, upload: Upload) {
       },
       process: { ...c.process, sources, groups },
       scale: { ...c.scale, cards: scaleCards },
-    },
+    }),
   });
 }

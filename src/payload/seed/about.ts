@@ -1,5 +1,6 @@
 import type { Payload } from "payload";
 import { seedContext as context, type Upload } from "./media";
+import { seedEn } from "./seedEn";
 
 export async function seedAbout(payload: Payload, upload: Upload) {
   const badges = [
@@ -14,7 +15,7 @@ export async function seedAbout(payload: Payload, upload: Upload) {
   await payload.updateGlobal({
     slug: "about",
     context,
-    data: {
+    data: seedEn({
       header: {
         title: "About Vetrix",
         headline: "Architecting The *Future* Of Operations.",
@@ -120,6 +121,6 @@ export async function seedAbout(payload: Payload, upload: Upload) {
           badges.map(async ([name, file]) => ({ name, logo: await upload(`about/${file}.webp`, `${name} certified`) })),
         ),
       },
-    },
+    }),
   });
 }

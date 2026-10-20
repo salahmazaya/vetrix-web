@@ -1,8 +1,8 @@
 import { HeroWave } from "../three/HeroWave";
 import { PillButton } from "../ui/PillButton";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
-export function Hero({ content }: { content: Home["hero"] }) {
+export function Hero({ content }: { content: SiteHome["hero"] }) {
   return (
     <section className="relative isolate flex min-h-[760px] items-start justify-center overflow-hidden bg-[#050d24] px-4 pt-[200px] md:min-h-[935px] md:pt-[231px]">
       {/* Deep navy backdrop with the blue glow the stock photo used to provide */}

@@ -1,5 +1,6 @@
 import type { Payload } from "payload";
 import { seedContext as context, type Upload } from "./media";
+import { seedEn } from "./seedEn";
 
 export async function seedSolutions(payload: Payload, upload: Upload) {
   const card = async (title: string, body: string, label: string, image: string, alt: string) => ({
@@ -11,7 +12,7 @@ export async function seedSolutions(payload: Payload, upload: Upload) {
   await payload.updateGlobal({
     slug: "solutions",
     context,
-    data: {
+    data: seedEn({
       header: {
         title: "Vetrix Solutions",
         headline: "Engineering Systems Built For *Growth*.",
@@ -94,6 +95,6 @@ export async function seedSolutions(payload: Payload, upload: Upload) {
           },
         ],
       },
-    },
+    }),
   });
 }

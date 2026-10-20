@@ -4,7 +4,7 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { Reveal } from "../motion/Reveal";
 import { TiltCard } from "../motion/TiltCard";
 import { mediaSrc } from "@/lib/cms";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
 const sideCard = "linear-gradient(180deg, #0c1226 0%, #14161f 45%, #121622 100%)";
 const middleCard = "linear-gradient(180deg, #132a49 0%, #181c27 100%)";
@@ -19,7 +19,7 @@ function Lines({ text }: { text: string }) {
   ));
 }
 
-export function ScaleSmarter({ content }: { content: Home["scale"] }) {
+export function ScaleSmarter({ content }: { content: SiteHome["scale"] }) {
   return (
     <section className="bg-night-gradient relative overflow-hidden px-4 pt-[103px] pb-24 md:px-8">
       <BinaryPattern tone="dark" className="absolute top-0 -left-2 w-40" />

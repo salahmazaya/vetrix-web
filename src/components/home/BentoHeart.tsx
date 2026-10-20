@@ -1,6 +1,6 @@
 import { Orb } from "../three/Orb";
 import { VeMark } from "../ui/VeMark";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
 // Everything is laid out in the artwork's own 556 x 820 space so it scales as one piece
 const W = 556;
@@ -41,7 +41,7 @@ function FeatureIcon({ kind }: { kind: "flow" | "insight" }) {
 }
 
 /** "The Intelligent Heart of Your Business" card, rebuilt from the artwork so every part is live. */
-export function BentoHeart({ content }: { content: Home["meetVe"]["heart"] }) {
+export function BentoHeart({ content }: { content: SiteHome["meetVe"]["heart"] }) {
   const [flow, insight] = content.features ?? [];
   return (
     <div className="@container relative aspect-[556/820] w-full">

@@ -6,9 +6,9 @@ import { BracketLabel } from "../ui/StatBadge";
 import { BentoHeart } from "./BentoHeart";
 import { AiToggle, ChipCluster, GenerateButton } from "./BentoWidgets";
 import { mediaSrc } from "@/lib/cms";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
-export function MeetVe({ content }: { content: Home["meetVe"] }) {
+export function MeetVe({ content }: { content: SiteHome["meetVe"] }) {
   const { introCard, trustedCard, statCard } = content;
   const avatars = mediaSrc(trustedCard.avatars);
   return (
@@ -23,7 +23,7 @@ export function MeetVe({ content }: { content: Home["meetVe"] }) {
           </Reveal>
 
           {/* Left column */}
-          <div className="grid gap-5 sm:grid-cols-3 lg:order-1 lg:grid-cols-1 lg:grid-rows-[396px_220px_164px]">
+          <div className="grid gap-5 sm:grid-cols-3 lg:order-1 lg:grid-cols-1 lg:grid-rows-[396px_minmax(220px,auto)_164px]">
             <Reveal className="glass-card bento-card flex flex-col justify-between gap-10 px-8 pt-7 pb-6">
               <p className="text-[32px] leading-10 font-medium tracking-[-0.01em] text-navy">
                 {introCard.title}{" "}
@@ -33,15 +33,18 @@ export function MeetVe({ content }: { content: Home["meetVe"] }) {
                 <p className="max-w-[217px] text-base leading-6 text-black/50">{introCard.caption}</p>
               )}
             </Reveal>
-            <Reveal className="glass-card bento-card flex flex-col items-center justify-between gap-2 px-8 pt-7 pb-6" delay={100}>
-              <p className="text-sm leading-7 text-navy/50">{trustedCard.label}</p>
-              <p className="text-gradient-brand text-[62px] leading-[56px] font-semibold tracking-[-0.02em]">
+            <Reveal
+              className="glass-card bento-card bento-card--trusted flex min-h-[220px] flex-col items-center justify-center gap-2 px-6 py-7 sm:px-8 sm:py-8"
+              delay={100}
+            >
+              <p className="text-center text-sm leading-7 text-navy/50">{trustedCard.label}</p>
+              <p className="text-gradient-brand text-[48px] leading-none font-semibold tracking-[-0.02em] sm:text-[62px] sm:leading-[56px]">
                 <CountUp value={trustedCard.value} />
               </p>
               {avatars && (
-                <Image src={avatars.src} alt={avatars.alt} width={150} height={62} className="avatars-bob" />
+                <Image src={avatars.src} alt={avatars.alt} width={150} height={62} className="avatars-bob max-w-full shrink-0" />
               )}
-              <p className="text-[18px] leading-7 text-navy">{trustedCard.caption}</p>
+              <p className="text-center text-base leading-8 text-navy pb-0.5 sm:text-[18px]">{trustedCard.caption}</p>
             </Reveal>
             <Reveal className="glass-card bento-card flex items-center justify-center p-6" delay={200}>
               <GenerateButton label={content.generateLabel} />

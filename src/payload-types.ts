@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     messages: Message;
+    'site-pages': SitePage;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     messages: MessagesSelect<false> | MessagesSelect<true>;
+    'site-pages': SitePagesSelect<false> | SitePagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -88,7 +90,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ar') | ('en' | 'ar')[];
   globals: {
     header: Header;
     home: Home;
@@ -111,7 +113,7 @@ export interface Config {
     cta: CtaSelect<false> | CtaSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'ar';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -145,6 +147,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  enabled?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -171,7 +174,9 @@ export interface User {
  */
 export interface Media {
   id: number;
-  alt?: string | null;
+  alt_en?: string | null;
+  alt_ar?: string | null;
+  enabled?: boolean | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -196,6 +201,30 @@ export interface Message {
   email: string;
   subject: string;
   message: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Creates a new URL on the public site with the standard page header and content area.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-pages".
+ */
+export interface SitePage {
+  id: number;
+  /**
+   * URL path without slashes, e.g. privacy-policy → /en/privacy-policy
+   */
+  slug: string;
+  title_en: string;
+  title_ar: string;
+  headline_en?: string | null;
+  headline_ar?: string | null;
+  intro_en?: string | null;
+  intro_ar?: string | null;
+  content_en: string;
+  content_ar: string;
+  enabled?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -234,6 +263,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'messages';
         value: number | Message;
+      } | null)
+    | ({
+        relationTo: 'site-pages';
+        value: number | SitePage;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -282,6 +315,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  enabled?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -305,7 +339,9 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
+  alt_en?: T;
+  alt_ar?: T;
+  enabled?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -327,6 +363,24 @@ export interface MessagesSelect<T extends boolean = true> {
   email?: T;
   subject?: T;
   message?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-pages_select".
+ */
+export interface SitePagesSelect<T extends boolean = true> {
+  slug?: T;
+  title_en?: T;
+  title_ar?: T;
+  headline_en?: T;
+  headline_ar?: T;
+  intro_en?: T;
+  intro_ar?: T;
+  content_en?: T;
+  content_ar?: T;
+  enabled?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -378,13 +432,15 @@ export interface Header {
   id: number;
   links?:
     | {
-        label: string;
+        label_en: string;
+        label_ar: string;
         href: string;
         id?: string | null;
       }[]
     | null;
   button: {
-    label: string;
+    label_en: string;
+    label_ar: string;
     href: string;
   };
   updatedAt?: string | null;
@@ -397,74 +453,92 @@ export interface Header {
 export interface Home {
   id: number;
   hero: {
-    title: string;
-    description: string;
+    title_en: string;
+    title_ar: string;
+    description_en: string;
+    description_ar: string;
     primaryButton: {
-      label: string;
+      label_en: string;
+      label_ar: string;
       href: string;
     };
     secondaryButton: {
-      label: string;
+      label_en: string;
+      label_ar: string;
       href: string;
     };
   };
   meetVe: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     introCard: {
-      title: string;
-      /**
-       * Shown in the blue gradient after the title
-       */
-      highlight?: string | null;
-      caption?: string | null;
+      title_en: string;
+      title_ar: string;
+      highlight_en?: string | null;
+      highlight_ar?: string | null;
+      caption_en?: string | null;
+      caption_ar?: string | null;
     };
     trustedCard: {
-      label: string;
-      /**
-       * e.g. 12K, counts up
-       */
-      value: string;
-      caption: string;
+      label_en: string;
+      label_ar: string;
+      value_en: string;
+      value_ar: string;
+      caption_en: string;
+      caption_ar: string;
       avatars: number | Media;
     };
-    generateLabel: string;
+    generateLabel_en: string;
+    generateLabel_ar: string;
     statCard: {
-      value: string;
-      label: string;
+      value_en: string;
+      value_ar: string;
+      label_en: string;
+      label_ar: string;
     };
-    chipsTitle: string;
+    chipsTitle_en: string;
+    chipsTitle_ar: string;
     heart: {
-      title: string;
+      title_en: string;
+      title_ar: string;
       features?:
         | {
-            title: string;
-            body: string;
+            title_en: string;
+            title_ar: string;
+            body_en: string;
+            body_ar: string;
             id?: string | null;
           }[]
         | null;
     };
   };
   about: {
-    eyebrow: string;
+    eyebrow_en: string;
+    eyebrow_ar: string;
     /**
      * The paragraph in parts; highlighted parts light up in blue as you scroll
      */
     intro?:
       | {
-          text: string;
+          text_en: string;
+          text_ar: string;
           highlight?: boolean | null;
           id?: string | null;
         }[]
       | null;
     button: {
-      label: string;
+      label_en: string;
+      label_ar: string;
       href: string;
     };
     pills?:
       | {
-          label: string;
+          label_en: string;
+          label_ar: string;
           /**
            * Spark colour, e.g. #f97316
            */
@@ -472,33 +546,44 @@ export interface Home {
           id?: string | null;
         }[]
       | null;
-    accessLabel: string;
+    accessLabel_en: string;
+    accessLabel_ar: string;
   };
   edge: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     cards?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   process: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     stages?:
       | {
-          label: string;
+          label_en: string;
+          label_ar: string;
           id?: string | null;
         }[]
       | null;
     categories?:
       | {
-          label: string;
+          label_en: string;
+          label_ar: string;
           id?: string | null;
         }[]
       | null;
@@ -507,7 +592,8 @@ export interface Home {
      */
     sources?:
       | {
-          name: string;
+          name_en: string;
+          name_ar: string;
           logo: number | Media;
           /**
            * Shown lit up in the diagram
@@ -517,21 +603,26 @@ export interface Home {
         }[]
       | null;
     reef: {
-      title: string;
+      title_en: string;
+      title_ar: string;
       chips?:
         | {
-            label: string;
+            label_en: string;
+            label_ar: string;
             id?: string | null;
           }[]
         | null;
     };
-    toolsTitle: string;
+    toolsTitle_en: string;
+    toolsTitle_ar: string;
     groups?:
       | {
-          label: string;
+          label_en: string;
+          label_ar: string;
           tiles?:
             | {
-                name: string;
+                name_en: string;
+                name_ar: string;
                 logo: number | Media;
                 /**
                  * Shown lit up in the diagram
@@ -545,31 +636,35 @@ export interface Home {
       | null;
   };
   impact: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     stats?:
       | {
-          /**
-           * e.g. 85%, counts up
-           */
-          value: string;
-          label: string;
+          value_en: string;
+          value_ar: string;
+          label_en: string;
+          label_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   scale: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     cards?:
       | {
-          /**
-           * New lines are kept
-           */
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           image: number | Media;
           id?: string | null;
         }[]
@@ -585,64 +680,68 @@ export interface Home {
 export interface AiCore {
   id: number;
   header: {
-    /**
-     * Page name, also used in the breadcrumb
-     */
-    title: string;
-    /**
-     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
-     */
-    headline: string;
-    intro: string;
+    title_en: string;
+    title_ar: string;
+    headline_en: string;
+    headline_ar: string;
+    intro_en: string;
+    intro_ar: string;
   };
   brain: {
-    /**
-     * Wrap the word to colour in *stars*
-     */
-    title: string;
-    body: string;
+    title_en: string;
+    title_ar: string;
+    body_en: string;
+    body_ar: string;
     image: number | Media;
   };
   numbers?: {
     stats?:
       | {
-          /**
-           * e.g. 85%, counts up
-           */
-          value: string;
-          label: string;
+          value_en: string;
+          value_ar: string;
+          label_en: string;
+          label_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   features: {
-    eyebrow: string;
-    /**
-     * Wrap the word to colour in *stars*
-     */
-    title: string;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
     cards?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   framework: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     image: number | Media;
   };
   steps: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     items?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           id?: string | null;
         }[]
       | null;
@@ -657,92 +756,113 @@ export interface AiCore {
 export interface About {
   id: number;
   header: {
-    /**
-     * Page name, also used in the breadcrumb
-     */
-    title: string;
-    /**
-     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
-     */
-    headline: string;
-    intro: string;
+    title_en: string;
+    title_ar: string;
+    headline_en: string;
+    headline_ar: string;
+    intro_en: string;
+    intro_ar: string;
   };
   identity: {
-    eyebrow: string;
-    title: string;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
     image: number | Media;
     stats?:
       | {
-          /**
-           * e.g. 85%, counts up
-           */
-          value: string;
-          label: string;
+          value_en: string;
+          value_ar: string;
+          label_en: string;
+          label_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   mission: {
-    eyebrow: string;
-    title: string;
-    body: string;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    body_en: string;
+    body_ar: string;
     points?:
       | {
-          text: string;
+          text_en: string;
+          text_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   vision: {
-    eyebrow: string;
-    title: string;
-    body: string;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    body_en: string;
+    body_ar: string;
     points?:
       | {
-          text: string;
+          text_en: string;
+          text_ar: string;
           id?: string | null;
         }[]
       | null;
   };
   whatWeDo: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     items?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           id?: string | null;
         }[]
       | null;
     button: {
-      label: string;
+      label_en: string;
+      label_ar: string;
       href: string;
     };
   };
   standard: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     cards?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           image: number | Media;
           id?: string | null;
         }[]
       | null;
   };
   technologies: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     /**
      * Logos scroll along in a loop
      */
     badges?:
       | {
-          name: string;
+          name_en: string;
+          name_ar: string;
           logo: number | Media;
           id?: string | null;
         }[]
@@ -758,39 +878,42 @@ export interface About {
 export interface Solution {
   id: number;
   header: {
-    /**
-     * Page name, also used in the breadcrumb
-     */
-    title: string;
-    /**
-     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
-     */
-    headline: string;
-    intro: string;
+    title_en: string;
+    title_ar: string;
+    headline_en: string;
+    headline_ar: string;
+    intro_en: string;
+    intro_ar: string;
   };
   deliver: {
-    /**
-     * Wrap the word to colour in *stars*
-     */
-    title: string;
-    body: string;
+    title_en: string;
+    title_ar: string;
+    body_en: string;
+    body_ar: string;
     button: {
-      label: string;
+      label_en: string;
+      label_ar: string;
       href: string;
     };
     image: number | Media;
   };
   core: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     cards?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           image: number | Media;
           link: {
-            label: string;
+            label_en: string;
+            label_ar: string;
             href: string;
           };
           id?: string | null;
@@ -798,13 +921,18 @@ export interface Solution {
       | null;
   };
   methodology: {
-    eyebrow: string;
-    title: string;
-    description?: string | null;
+    eyebrow_en: string;
+    eyebrow_ar: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string | null;
+    description_ar?: string | null;
     steps?:
       | {
-          title: string;
-          body: string;
+          title_en: string;
+          title_ar: string;
+          body_en: string;
+          body_ar: string;
           id?: string | null;
         }[]
       | null;
@@ -819,25 +947,30 @@ export interface Solution {
 export interface Contact {
   id: number;
   header: {
-    /**
-     * Page name, also used in the breadcrumb
-     */
-    title: string;
-    /**
-     * Wrap the word to colour in *stars*, e.g. Where *Deep* Tech Meets Business Logic
-     */
-    headline: string;
-    intro: string;
+    title_en: string;
+    title_ar: string;
+    headline_en: string;
+    headline_ar: string;
+    intro_en: string;
+    intro_ar: string;
   };
   form: {
-    title: string;
-    nameLabel: string;
-    emailLabel: string;
-    subjectLabel: string;
-    messageLabel: string;
-    submitLabel: string;
-    successTitle: string;
-    successMessage: string;
+    title_en: string;
+    title_ar: string;
+    nameLabel_en: string;
+    nameLabel_ar: string;
+    emailLabel_en: string;
+    emailLabel_ar: string;
+    subjectLabel_en: string;
+    subjectLabel_ar: string;
+    messageLabel_en: string;
+    messageLabel_ar: string;
+    submitLabel_en: string;
+    submitLabel_ar: string;
+    successTitle_en: string;
+    successTitle_ar: string;
+    successMessage_en: string;
+    successMessage_ar: string;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -848,13 +981,18 @@ export interface Contact {
  */
 export interface Faq {
   id: number;
-  eyebrow: string;
-  title: string;
-  description?: string | null;
+  eyebrow_en: string;
+  eyebrow_ar: string;
+  title_en: string;
+  title_ar: string;
+  description_en?: string | null;
+  description_ar?: string | null;
   items?:
     | {
-        question: string;
-        answer: string;
+        question_en: string;
+        question_ar: string;
+        answer_en: string;
+        answer_ar: string;
         id?: string | null;
       }[]
     | null;
@@ -867,14 +1005,15 @@ export interface Faq {
  */
 export interface Cta {
   id: number;
-  eyebrow: string;
-  /**
-   * New lines are kept on large screens
-   */
-  title: string;
-  description?: string | null;
+  eyebrow_en: string;
+  eyebrow_ar: string;
+  title_en: string;
+  title_ar: string;
+  description_en?: string | null;
+  description_ar?: string | null;
   button: {
-    label: string;
+    label_en: string;
+    label_ar: string;
     href: string;
   };
   updatedAt?: string | null;
@@ -886,7 +1025,8 @@ export interface Cta {
  */
 export interface Footer {
   id: number;
-  tagline: string;
+  tagline_en: string;
+  tagline_ar: string;
   socials?:
     | {
         platform: 'facebook' | 'instagram' | 'x' | 'linkedin';
@@ -896,10 +1036,12 @@ export interface Footer {
     | null;
   columns?:
     | {
-        title: string;
+        title_en: string;
+        title_ar: string;
         links?:
           | {
-              label: string;
+              label_en: string;
+              label_ar: string;
               href: string;
               id?: string | null;
             }[]
@@ -918,14 +1060,16 @@ export interface HeaderSelect<T extends boolean = true> {
   links?:
     | T
     | {
-        label?: T;
+        label_en?: T;
+        label_ar?: T;
         href?: T;
         id?: T;
       };
   button?:
     | T
     | {
-        label?: T;
+        label_en?: T;
+        label_ar?: T;
         href?: T;
       };
   updatedAt?: T;
@@ -940,59 +1084,79 @@ export interface HomeSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        title?: T;
-        description?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         primaryButton?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
             };
         secondaryButton?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
             };
       };
   meetVe?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         introCard?:
           | T
           | {
-              title?: T;
-              highlight?: T;
-              caption?: T;
+              title_en?: T;
+              title_ar?: T;
+              highlight_en?: T;
+              highlight_ar?: T;
+              caption_en?: T;
+              caption_ar?: T;
             };
         trustedCard?:
           | T
           | {
-              label?: T;
-              value?: T;
-              caption?: T;
+              label_en?: T;
+              label_ar?: T;
+              value_en?: T;
+              value_ar?: T;
+              caption_en?: T;
+              caption_ar?: T;
               avatars?: T;
             };
-        generateLabel?: T;
+        generateLabel_en?: T;
+        generateLabel_ar?: T;
         statCard?:
           | T
           | {
-              value?: T;
-              label?: T;
+              value_en?: T;
+              value_ar?: T;
+              label_en?: T;
+              label_ar?: T;
             };
-        chipsTitle?: T;
+        chipsTitle_en?: T;
+        chipsTitle_ar?: T;
         heart?:
           | T
           | {
-              title?: T;
+              title_en?: T;
+              title_ar?: T;
               features?:
                 | T
                 | {
-                    title?: T;
-                    body?: T;
+                    title_en?: T;
+                    title_ar?: T;
+                    body_en?: T;
+                    body_ar?: T;
                     id?: T;
                   };
             };
@@ -1000,65 +1164,81 @@ export interface HomeSelect<T extends boolean = true> {
   about?:
     | T
     | {
-        eyebrow?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
         intro?:
           | T
           | {
-              text?: T;
+              text_en?: T;
+              text_ar?: T;
               highlight?: T;
               id?: T;
             };
         button?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
             };
         pills?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               color?: T;
               id?: T;
             };
-        accessLabel?: T;
+        accessLabel_en?: T;
+        accessLabel_ar?: T;
       };
   edge?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         cards?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               id?: T;
             };
       };
   process?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         stages?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               id?: T;
             };
         categories?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               id?: T;
             };
         sources?:
           | T
           | {
-              name?: T;
+              name_en?: T;
+              name_ar?: T;
               logo?: T;
               highlighted?: T;
               id?: T;
@@ -1066,23 +1246,28 @@ export interface HomeSelect<T extends boolean = true> {
         reef?:
           | T
           | {
-              title?: T;
+              title_en?: T;
+              title_ar?: T;
               chips?:
                 | T
                 | {
-                    label?: T;
+                    label_en?: T;
+                    label_ar?: T;
                     id?: T;
                   };
             };
-        toolsTitle?: T;
+        toolsTitle_en?: T;
+        toolsTitle_ar?: T;
         groups?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               tiles?:
                 | T
                 | {
-                    name?: T;
+                    name_en?: T;
+                    name_ar?: T;
                     logo?: T;
                     highlighted?: T;
                     id?: T;
@@ -1093,28 +1278,38 @@ export interface HomeSelect<T extends boolean = true> {
   impact?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         stats?:
           | T
           | {
-              value?: T;
-              label?: T;
+              value_en?: T;
+              value_ar?: T;
+              label_en?: T;
+              label_ar?: T;
               id?: T;
             };
       };
   scale?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         cards?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               image?: T;
               id?: T;
             };
@@ -1131,15 +1326,20 @@ export interface AiCoreSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        title?: T;
-        headline?: T;
-        intro?: T;
+        title_en?: T;
+        title_ar?: T;
+        headline_en?: T;
+        headline_ar?: T;
+        intro_en?: T;
+        intro_ar?: T;
       };
   brain?:
     | T
     | {
-        title?: T;
-        body?: T;
+        title_en?: T;
+        title_ar?: T;
+        body_en?: T;
+        body_ar?: T;
         image?: T;
       };
   numbers?:
@@ -1148,43 +1348,57 @@ export interface AiCoreSelect<T extends boolean = true> {
         stats?:
           | T
           | {
-              value?: T;
-              label?: T;
+              value_en?: T;
+              value_ar?: T;
+              label_en?: T;
+              label_ar?: T;
               id?: T;
             };
       };
   features?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
         cards?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               id?: T;
             };
       };
   framework?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         image?: T;
       };
   steps?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         items?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               id?: T;
             };
       };
@@ -1200,81 +1414,107 @@ export interface AboutSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        title?: T;
-        headline?: T;
-        intro?: T;
+        title_en?: T;
+        title_ar?: T;
+        headline_en?: T;
+        headline_ar?: T;
+        intro_en?: T;
+        intro_ar?: T;
       };
   identity?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
         image?: T;
         stats?:
           | T
           | {
-              value?: T;
-              label?: T;
+              value_en?: T;
+              value_ar?: T;
+              label_en?: T;
+              label_ar?: T;
               id?: T;
             };
       };
   mission?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        body?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        body_en?: T;
+        body_ar?: T;
         points?:
           | T
           | {
-              text?: T;
+              text_en?: T;
+              text_ar?: T;
               id?: T;
             };
       };
   vision?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        body?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        body_en?: T;
+        body_ar?: T;
         points?:
           | T
           | {
-              text?: T;
+              text_en?: T;
+              text_ar?: T;
               id?: T;
             };
       };
   whatWeDo?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         items?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               id?: T;
             };
         button?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
             };
       };
   standard?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         cards?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               image?: T;
               id?: T;
             };
@@ -1282,13 +1522,17 @@ export interface AboutSelect<T extends boolean = true> {
   technologies?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         badges?:
           | T
           | {
-              name?: T;
+              name_en?: T;
+              name_ar?: T;
               logo?: T;
               id?: T;
             };
@@ -1305,19 +1549,25 @@ export interface SolutionsSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        title?: T;
-        headline?: T;
-        intro?: T;
+        title_en?: T;
+        title_ar?: T;
+        headline_en?: T;
+        headline_ar?: T;
+        intro_en?: T;
+        intro_ar?: T;
       };
   deliver?:
     | T
     | {
-        title?: T;
-        body?: T;
+        title_en?: T;
+        title_ar?: T;
+        body_en?: T;
+        body_ar?: T;
         button?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
             };
         image?: T;
@@ -1325,19 +1575,25 @@ export interface SolutionsSelect<T extends boolean = true> {
   core?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         cards?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               image?: T;
               link?:
                 | T
                 | {
-                    label?: T;
+                    label_en?: T;
+                    label_ar?: T;
                     href?: T;
                   };
               id?: T;
@@ -1346,14 +1602,19 @@ export interface SolutionsSelect<T extends boolean = true> {
   methodology?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        description?: T;
+        eyebrow_en?: T;
+        eyebrow_ar?: T;
+        title_en?: T;
+        title_ar?: T;
+        description_en?: T;
+        description_ar?: T;
         steps?:
           | T
           | {
-              title?: T;
-              body?: T;
+              title_en?: T;
+              title_ar?: T;
+              body_en?: T;
+              body_ar?: T;
               id?: T;
             };
       };
@@ -1369,21 +1630,32 @@ export interface ContactSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        title?: T;
-        headline?: T;
-        intro?: T;
+        title_en?: T;
+        title_ar?: T;
+        headline_en?: T;
+        headline_ar?: T;
+        intro_en?: T;
+        intro_ar?: T;
       };
   form?:
     | T
     | {
-        title?: T;
-        nameLabel?: T;
-        emailLabel?: T;
-        subjectLabel?: T;
-        messageLabel?: T;
-        submitLabel?: T;
-        successTitle?: T;
-        successMessage?: T;
+        title_en?: T;
+        title_ar?: T;
+        nameLabel_en?: T;
+        nameLabel_ar?: T;
+        emailLabel_en?: T;
+        emailLabel_ar?: T;
+        subjectLabel_en?: T;
+        subjectLabel_ar?: T;
+        messageLabel_en?: T;
+        messageLabel_ar?: T;
+        submitLabel_en?: T;
+        submitLabel_ar?: T;
+        successTitle_en?: T;
+        successTitle_ar?: T;
+        successMessage_en?: T;
+        successMessage_ar?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1394,14 +1666,19 @@ export interface ContactSelect<T extends boolean = true> {
  * via the `definition` "faq_select".
  */
 export interface FaqSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
-  description?: T;
+  eyebrow_en?: T;
+  eyebrow_ar?: T;
+  title_en?: T;
+  title_ar?: T;
+  description_en?: T;
+  description_ar?: T;
   items?:
     | T
     | {
-        question?: T;
-        answer?: T;
+        question_en?: T;
+        question_ar?: T;
+        answer_en?: T;
+        answer_ar?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -1413,13 +1690,17 @@ export interface FaqSelect<T extends boolean = true> {
  * via the `definition` "cta_select".
  */
 export interface CtaSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
-  description?: T;
+  eyebrow_en?: T;
+  eyebrow_ar?: T;
+  title_en?: T;
+  title_ar?: T;
+  description_en?: T;
+  description_ar?: T;
   button?:
     | T
     | {
-        label?: T;
+        label_en?: T;
+        label_ar?: T;
         href?: T;
       };
   updatedAt?: T;
@@ -1431,7 +1712,8 @@ export interface CtaSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  tagline?: T;
+  tagline_en?: T;
+  tagline_ar?: T;
   socials?:
     | T
     | {
@@ -1442,11 +1724,13 @@ export interface FooterSelect<T extends boolean = true> {
   columns?:
     | T
     | {
-        title?: T;
+        title_en?: T;
+        title_ar?: T;
         links?:
           | T
           | {
-              label?: T;
+              label_en?: T;
+              label_ar?: T;
               href?: T;
               id?: T;
             };

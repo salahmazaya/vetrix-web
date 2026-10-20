@@ -3,7 +3,7 @@ import { Reveal } from "../motion/Reveal";
 import { ScrollWords } from "../motion/ScrollWords";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { PillButton } from "../ui/PillButton";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
 function Spark({ color }: { color: string }) {
   return (
@@ -40,7 +40,7 @@ function Connector({ label }: { label: string }) {
   );
 }
 
-export function AboutIntro({ content }: { content: Home["about"] }) {
+export function AboutIntro({ content }: { content: SiteHome["about"] }) {
   const intro = (content.intro ?? []).map((p) => ({ text: p.text, highlight: p.highlight ?? false }));
   return (
     <section className="bg-night-gradient relative isolate overflow-hidden px-4 pt-[105px] pb-24 md:min-h-[866px]">

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AboutIntro } from "@/components/home/AboutIntro";
 import { Hero } from "@/components/home/Hero";
 import { MeetVe } from "@/components/home/MeetVe";
@@ -9,13 +10,29 @@ import { CtaSection } from "@/components/layout/CtaSection";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { getGlobal } from "@/lib/cms";
+import { languageAlternates } from "@/lib/i18n";
+import { requireLocale } from "@/lib/locale";
 
-export default async function Home() {
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const locale = await requireLocale(params);
+  const home = await getGlobal("home", locale);
+  const title = home.hero.title.replace(/\.$/, "");
+  return {
+    title: { absolute: `Vetrix | ${title}` },
+    description: home.hero.description,
+    alternates: languageAlternates("/"),
+  };
+}
+
+export default async function Home({ params }: Props) {
+  const locale = await requireLocale(params);
   const [header, home, cta, footer] = await Promise.all([
-    getGlobal("header"),
-    getGlobal("home"),
-    getGlobal("cta"),
-    getGlobal("footer"),
+    getGlobal("header", locale),
+    getGlobal("home", locale),
+    getGlobal("cta", locale),
+    getGlobal("footer", locale),
   ]);
 
   return (

@@ -5,7 +5,18 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    localPatterns: [{ pathname: "/images/**" }, { pathname: "/api/media/file/**" }],
+    localPatterns: [
+      { pathname: "/images/**" },
+      { pathname: "/media/**" },
+      { pathname: "/api/media/file/**" },
+    ],
+  },
+  // Uploaded files live in /media. Serve them as static files so a busy dashboard
+  // cannot block the pictures already on the page.
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: "/api/media/file/:path*", destination: "/media/:path*" }],
+    };
   },
   turbopack: {
     rules: {

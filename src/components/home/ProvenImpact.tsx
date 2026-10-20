@@ -3,17 +3,17 @@ import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
 import { StatBadge } from "../ui/StatBadge";
 import { Reveal } from "../motion/Reveal";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
 // Where each stat floats around the globe on desktop
 const positions = [
-  "lg:top-[200px] lg:left-0",
-  "lg:top-[60px] lg:left-[277px]",
-  "lg:top-[60px] lg:right-[277px]",
-  "lg:top-[200px] lg:right-0",
+  "lg:top-[200px] lg:start-0",
+  "lg:top-[60px] lg:start-[277px]",
+  "lg:top-[60px] lg:end-[277px]",
+  "lg:top-[200px] lg:end-0",
 ];
 
-export function ProvenImpact({ content }: { content: Home["impact"] }) {
+export function ProvenImpact({ content }: { content: SiteHome["impact"] }) {
   return (
     <section className="relative overflow-hidden bg-white px-4 pt-11 md:px-8">
       <BinaryPattern className="absolute -top-4 right-[-30px] w-48" />

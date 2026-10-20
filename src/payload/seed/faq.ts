@@ -1,11 +1,12 @@
 import type { Payload } from "payload";
 import { seedContext as context } from "./media";
+import { seedEn } from "./seedEn";
 
 export async function seedFaq(payload: Payload) {
   await payload.updateGlobal({
     slug: "faq",
     context,
-    data: {
+    data: seedEn({
       eyebrow: "FAQ",
       title: "Everything You Need to Know",
       description: "Clear, concise answers addressing the engineering process, system scalability, and AI capabilities.",
@@ -36,6 +37,6 @@ export async function seedFaq(payload: Payload) {
             "Custom CRMs, enterprise web platforms, real-time dashboards, workflow automation and AI assistants, all built around the way your business already works.",
         },
       ],
-    },
+    }),
   });
 }

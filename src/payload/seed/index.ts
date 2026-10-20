@@ -1,4 +1,6 @@
 import type { Payload } from "payload";
+import { seedArabic } from "./arabic";
+import { seedMediaArabicAlts } from "./mediaArabicAlts";
 import { seedAbout } from "./about";
 import { seedAiCore } from "./aiCore";
 import { seedContact } from "./contact";
@@ -20,12 +22,12 @@ const has = (tab: string, field: string) => (doc: Record<string, unknown>) =>
 
 const seeders: Seeder[] = [
   { slug: "header", filled: (d) => Array.isArray(d.links) && d.links.length > 0, run: seedSiteGlobals },
-  { slug: "home", filled: (d) => Boolean((d.hero as { title?: string } | undefined)?.title), run: seedHome },
+  { slug: "home", filled: (d) => Boolean((d.hero as { title_en?: string } | undefined)?.title_en), run: seedHome },
   { slug: "faq", filled: (d) => Array.isArray(d.items) && d.items.length > 0, run: seedFaq },
-  { slug: "aiCore", filled: has("brain", "title"), run: seedAiCore },
-  { slug: "about", filled: has("identity", "title"), run: seedAbout },
-  { slug: "solutions", filled: has("deliver", "title"), run: seedSolutions },
-  { slug: "contact", filled: has("form", "title"), run: seedContact },
+  { slug: "aiCore", filled: has("brain", "title_en"), run: seedAiCore },
+  { slug: "about", filled: has("identity", "title_en"), run: seedAbout },
+  { slug: "solutions", filled: has("deliver", "title_en"), run: seedSolutions },
+  { slug: "contact", filled: has("form", "title_en"), run: seedContact },
 ];
 
 /**
@@ -40,4 +42,6 @@ export async function seed(payload: Payload) {
     payload.logger.info(`Seeding ${s.slug}...`);
     await s.run(payload, upload);
   }
+  await seedArabic(payload);
+  await seedMediaArabicAlts(payload);
 }

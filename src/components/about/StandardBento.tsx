@@ -2,13 +2,13 @@ import Image from "next/image";
 import { Reveal } from "../motion/Reveal";
 import { TiltCard } from "../motion/TiltCard";
 import { SectionHeading } from "../ui/SectionHeading";
-import type { About } from "@/payload-types";
+import type { SiteAbout } from "@/lib/site-content";
 import { mediaSrc } from "@/lib/cms";
 
-type Card = NonNullable<About["standard"]["cards"]>[number];
+type Card = NonNullable<SiteAbout["standard"]["cards"]>[number];
 
 /** "The Vetrix Standard": three illustrated cards, then the dashboards and global-scale cards. */
-export function StandardBento({ content }: { content: About["standard"] }) {
+export function StandardBento({ content }: { content: SiteAbout["standard"] }) {
   const cards = content.cards ?? [];
   const top = cards.slice(0, 3);
   const [dashboards, scale] = cards.slice(3);
@@ -47,8 +47,8 @@ export function StandardBento({ content }: { content: About["standard"] }) {
                 <div className="relative z-10 max-w-[420px] p-6">
                   <Text card={scale} />
                 </div>
-                <div className="absolute right-0 bottom-0 aspect-[482/382] w-[85%] max-w-[482px]">
-                  <Illustration card={scale} className="bento-globe object-contain object-right-bottom" sizes="482px" />
+                <div className="absolute end-0 bottom-0 aspect-[482/382] w-[85%] max-w-[482px]">
+                  <Illustration card={scale} className="bento-globe object-contain object-right-bottom rtl:object-left-bottom" sizes="482px" />
                 </div>
               </TiltCard>
             </Reveal>

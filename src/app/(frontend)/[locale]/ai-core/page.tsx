@@ -8,17 +8,27 @@ import { StatsRow } from "@/components/ai-core/StatsRow";
 import { InnerPage } from "@/components/inner/InnerPage";
 import { PageHeader } from "@/components/inner/PageHeader";
 import { getGlobal } from "@/lib/cms";
+import { languageAlternates } from "@/lib/i18n";
+import { requireLocale } from "@/lib/locale";
 
-export const metadata: Metadata = {
-  title: "AI Core | Vetrix",
-  description: "Ve Core, the AI engine built into every Vetrix system.",
-};
+type Props = { params: Promise<{ locale: string }> };
 
-export default async function AiCorePage() {
-  const page = await getGlobal("aiCore");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const locale = await requireLocale(params);
+  const page = await getGlobal("aiCore", locale);
+  return {
+    title: page.header.title,
+    description: page.header.intro,
+    alternates: languageAlternates("/ai-core"),
+  };
+}
+
+export default async function AiCorePage({ params }: Props) {
+  const locale = await requireLocale(params);
+  const page = await getGlobal("aiCore", locale);
   return (
-    <InnerPage>
-      <PageHeader content={page.header}>
+    <InnerPage locale={locale}>
+      <PageHeader locale={locale} content={page.header}>
         <BrainCard content={page.brain} />
       </PageHeader>
       <StatsRow stats={page.numbers?.stats ?? []} />

@@ -17,7 +17,7 @@ export function mediaUploader(payload: Payload) {
       (
         await payload.create({
           collection: "media",
-          data: { alt },
+          data: { alt_en: alt },
           filePath: path.resolve(process.cwd(), "public/images", file),
           context: seedContext,
         })

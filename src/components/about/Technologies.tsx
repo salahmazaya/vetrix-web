@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { SectionHeading } from "../ui/SectionHeading";
-import type { About } from "@/payload-types";
+import type { SiteAbout } from "@/lib/site-content";
 import { mediaSrc } from "@/lib/cms";
 
 /** Dark band with certification badges gliding past in an endless loop. */
-export function Technologies({ content }: { content: About["technologies"] }) {
+export function Technologies({ content }: { content: SiteAbout["technologies"] }) {
   const badges = (content.badges ?? []).flatMap((b) => {
     const img = mediaSrc(b.logo);
     return img ? [{ ...img, name: b.name, id: b.id }] : [];

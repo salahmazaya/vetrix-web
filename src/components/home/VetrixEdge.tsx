@@ -1,9 +1,9 @@
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { SectionHeading } from "../ui/SectionHeading";
 import { EdgeCards } from "./EdgeCards";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
-export function VetrixEdge({ content }: { content: Home["edge"] }) {
+export function VetrixEdge({ content }: { content: SiteHome["edge"] }) {
   return (
     <section className="relative overflow-hidden bg-white px-4 pt-16 pb-24 md:px-8">
       <BinaryPattern className="absolute -top-2 right-[-30px] w-44" />

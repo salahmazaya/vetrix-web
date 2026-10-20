@@ -1,11 +1,12 @@
 import type { Payload } from "payload";
 import { seedContext as context } from "./media";
+import { seedEn } from "./seedEn";
 
 export async function seedContact(payload: Payload) {
   await payload.updateGlobal({
     slug: "contact",
     context,
-    data: {
+    data: seedEn({
       header: {
         title: "Contact Us",
         headline: "Request *Technical* Consultation.",
@@ -22,6 +23,6 @@ export async function seedContact(payload: Payload) {
         successTitle: "Message received.",
         successMessage: "Thanks for reaching out. A technical expert will get back to you within one business day.",
       },
-    },
+    }),
   });
 }

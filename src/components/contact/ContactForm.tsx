@@ -1,14 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
-import { sendMessage, type SendState } from "@/app/(frontend)/contact/actions";
-import type { Contact } from "@/payload-types";
+import { sendMessage, type SendState } from "@/app/(frontend)/[locale]/contact/actions";
+import type { Locale } from "@/lib/i18n";
+import { copyFor } from "@/lib/ui-copy";
+import type { SiteContact } from "@/lib/site-content";
 
 const input =
   "contact-input w-full rounded-[10px] border border-[#d6e2ec] bg-white/70 px-5 text-sm text-navy placeholder:text-[#9aa5b1] outline-none";
 
 /** The consultation form. Messages are saved to the admin; a thank-you replaces the form once sent. */
-export function ContactForm({ content }: { content: Contact["form"] }) {
+export function ContactForm({ locale, content }: { locale: Locale; content: SiteContact["form"] }) {
+  const copy = copyFor(locale);
   const [state, action, pending] = useActionState<SendState, FormData>(sendMessage, { status: "idle" });
   const v = state.fields ?? {};
 
@@ -36,6 +39,7 @@ export function ContactForm({ content }: { content: Contact["form"] }) {
             <textarea name="message" required rows={3} maxLength={5000} defaultValue={v.message} className={`${input} min-h-[72px] resize-y py-3`} />
           </label>
           {/* Leave empty: catches spam bots */}
+          <input type="hidden" name="locale" value={locale} />
           <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
           {state.status === "error" && (
             <p role="alert" className="text-sm text-red-600">
@@ -49,7 +53,7 @@ export function ContactForm({ content }: { content: Contact["form"] }) {
           >
             <span className={pending ? "opacity-0" : ""}>{content.submitLabel}</span>
             {pending && (
-              <span aria-label="Sending" className="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span aria-label={copy.sending} className="absolute inset-0 flex items-center justify-center gap-1.5">
                 {[0, 1, 2].map((i) => (
                   <span key={i} className="contact-dot size-1.5 rounded-full bg-white" style={{ animationDelay: `${i * 0.15}s` }} />
                 ))}

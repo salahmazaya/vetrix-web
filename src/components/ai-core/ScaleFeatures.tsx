@@ -3,15 +3,15 @@ import { Reveal } from "../motion/Reveal";
 import { TiltCard } from "../motion/TiltCard";
 import { Orb } from "../three/Orb";
 import { ArrowIcon } from "../ui/ArrowIcon";
-import type { AiCore } from "@/payload-types";
+import type { SiteAiCore } from "@/lib/site-content";
 
 // Row widths alternate narrow/wide like the design: 41/57, then 57/41
 const spans = ["lg:col-span-5", "lg:col-span-7", "lg:col-span-7", "lg:col-span-5"];
 
 /** "Built for Scale" heading with the live Ve orb, then four feature cards. */
-export function ScaleFeatures({ content }: { content: AiCore["features"] }) {
+export function ScaleFeatures({ content }: { content: SiteAiCore["features"] }) {
   return (
-    <section className="px-4 pt-20 pb-24 md:px-8 md:pt-[64px] md:pb-[64px] xl:px-[160px]">
+    <section className="page-px overflow-x-clip pt-20 pb-24 md:pt-[64px] md:pb-[64px]">
       <div className="mx-auto max-w-[1120px]">
         <div className="flex items-center justify-between gap-8">
           <div className="max-w-[676px]">

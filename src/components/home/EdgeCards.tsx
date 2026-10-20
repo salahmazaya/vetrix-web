@@ -3,14 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "../three/useInView";
 import { BinaryPattern } from "../ui/BinaryPattern";
-import type { Home } from "@/payload-types";
+import type { SiteHome } from "@/lib/site-content";
 
-// The first two cards put the big number on the left, as in the design
 const layouts = [
-  { numberLeft: true, bodyWidth: "sm:max-w-[272px]" },
-  { numberLeft: true, bodyWidth: "sm:max-w-[228px]" },
-  { numberLeft: false, bodyWidth: "" },
-  { numberLeft: false, bodyWidth: "" },
+  { align: "start" as const, bodyWidth: "sm:max-w-[272px]", bodyPad: "sm:pt-[60px]" },
+  { align: "start" as const, bodyWidth: "sm:max-w-[228px]", bodyPad: "sm:pt-[60px]" },
+  { align: "end" as const, bodyWidth: "sm:max-w-[269px]", bodyPad: "sm:pt-[90px]" },
+  { align: "end" as const, bodyWidth: "sm:max-w-[269px]", bodyPad: "sm:pt-[90px]" },
 ];
 
 const numberClip = { WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
@@ -19,7 +18,7 @@ const numberClip = { WebkitBackgroundClip: "text", backgroundClip: "text", color
  * The four Vetrix Edge cards. They start light; hovering (or, on touch screens, scrolling a card
  * to the middle of the screen) turns a card dark with the glowing blue number from the design.
  */
-export function EdgeCards({ cards }: { cards: NonNullable<Home["edge"]["cards"]> }) {
+export function EdgeCards({ cards }: { cards: NonNullable<SiteHome["edge"]["cards"]> }) {
   const { ref, inView } = useInView<HTMLDivElement>("-80px", true);
   const [touchActive, setTouchActive] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
@@ -46,7 +45,8 @@ export function EdgeCards({ cards }: { cards: NonNullable<Home["edge"]["cards"]>
   return (
     <div ref={ref} data-visible={inView} className="edge-grid grid gap-[18px] md:grid-cols-2">
       {cards.map((card, i) => {
-        const c = { ...card, n: String(i + 1).padStart(2, "0"), ...layouts[i % layouts.length] };
+        const layout = layouts[i] ?? layouts[0]!;
+        const c = { ...card, n: String(i + 1).padStart(2, "0"), ...layout };
         return (
           <article
             key={c.n}
@@ -63,12 +63,12 @@ export function EdgeCards({ cards }: { cards: NonNullable<Home["edge"]["cards"]>
             {/* Dark hover state, with a soft light that follows the pointer */}
             <div aria-hidden="true" className="edge-dark absolute inset-0 bg-[#050c16]" />
             <div aria-hidden="true" className="edge-spotlight absolute inset-0" />
-            <BinaryPattern tone="dark" className="edge-binary absolute -top-6 right-2 w-48" />
+            <BinaryPattern tone="dark" className="edge-binary absolute -top-6 end-2 w-48" />
 
-            <h3 className="edge-title relative text-2xl leading-[30px] font-medium">{c.title}</h3>
+            <h3 className="edge-title relative z-10 text-2xl leading-[30px] font-medium">{c.title}</h3>
             <div
-              className={`relative z-10 mt-6 flex flex-col gap-4 sm:mt-0 ${
-                c.numberLeft ? `sm:ml-auto ${c.bodyWidth} sm:pt-[60px]` : "sm:max-w-[269px] sm:pt-[90px]"
+              className={`relative z-10 flex flex-col gap-4 ${
+                c.align === "start" ? `sm:ms-auto ${c.bodyWidth} ${c.bodyPad}` : `${c.bodyWidth} ${c.bodyPad}`
               }`}
             >
               <p className="edge-body text-sm leading-[30px]">{c.body}</p>
@@ -76,8 +76,9 @@ export function EdgeCards({ cards }: { cards: NonNullable<Home["edge"]["cards"]>
 
             <span
               aria-hidden="true"
-              className={`edge-number pointer-events-none absolute top-[101px] text-[150px] leading-none font-normal max-sm:hidden sm:text-[190px] ${
-                c.numberLeft ? "left-[18px]" : "left-[293px]"
+              data-align={c.align}
+              className={`edge-number pointer-events-none absolute top-[101px] text-[150px] leading-none font-normal sm:text-[190px] ${
+                c.align === "start" ? "edge-number--start" : "edge-number--end"
               }`}
             >
               <span style={{ ...numberClip, backgroundImage: "linear-gradient(183deg, #000547 36%, rgba(1,71,255,0) 82%)" }}>

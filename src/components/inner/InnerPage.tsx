@@ -3,14 +3,15 @@ import { Footer } from "../layout/Footer";
 import { Navbar } from "../layout/Navbar";
 import { FaqSection } from "./FaqSection";
 import { getGlobal } from "@/lib/cms";
+import type { Locale } from "@/lib/i18n";
 
 /** Navigation, then the page's own sections, then the shared FAQ, call-to-action and footer. */
-export async function InnerPage({ children }: { children: React.ReactNode }) {
+export async function InnerPage({ locale, children }: { locale: Locale; children: React.ReactNode }) {
   const [header, faq, cta, footer] = await Promise.all([
-    getGlobal("header"),
-    getGlobal("faq"),
-    getGlobal("cta"),
-    getGlobal("footer"),
+    getGlobal("header", locale),
+    getGlobal("faq", locale),
+    getGlobal("cta", locale),
+    getGlobal("footer", locale),
   ]);
   return (
     <>

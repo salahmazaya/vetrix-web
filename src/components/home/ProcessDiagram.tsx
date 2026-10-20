@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { useInView } from "../three/useInView";
+import { localeFromPath } from "@/lib/i18n";
+import { copyFor } from "@/lib/ui-copy";
 
 // Everything is laid out in the original artwork's pixel space (1120 x 692) and scaled as one piece
 const W = 1120;
@@ -58,6 +61,7 @@ function Logo({ src, name }: ProcessTile) {
 /** The Ve hub diagram, built from real elements: data streams in from your apps, through Ve, and out to your tools. */
 export function ProcessDiagram({ content }: { content: ProcessContent }) {
   const { stages, groups } = content;
+  const copy = copyFor(localeFromPath(usePathname()));
   const { ref, inView } = useInView<HTMLDivElement>();
   const stage = useRef<HTMLDivElement>(null);
 
@@ -74,14 +78,13 @@ export function ProcessDiagram({ content }: { content: ProcessContent }) {
   };
 
   return (
-    // On phones the diagram keeps a readable size and scrolls sideways
-    <div className="-mx-4 overflow-x-auto px-4 pb-2 md:mx-0 md:overflow-visible md:p-0">
-      <div ref={ref} className="min-w-[720px] [perspective:1600px]" onPointerMove={onMove} onPointerLeave={onLeave}>
+    <div dir="ltr" className="process-diagram w-full min-w-0">
+      <div ref={ref} className="w-full min-w-0 [perspective:1600px]" onPointerMove={onMove} onPointerLeave={onLeave}>
         <div
           ref={stage}
           data-visible={inView}
           role="img"
-          aria-label="Ve sits at the center of your stack: it collects, normalizes, enriches and routes data from your existing apps into reporting, AI search, insights and third-party tools."
+          aria-label={copy.process}
           className="process-stage @container relative aspect-[1120/692] w-full [transform-style:preserve-3d]"
         >
           {/* Backdrop: soft glow and faint orbit rings behind the hub */}

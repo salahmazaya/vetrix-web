@@ -2,11 +2,11 @@ import Image from "next/image";
 import { CountUp } from "../motion/CountUp";
 import { Reveal } from "../motion/Reveal";
 import { PointIcon } from "./PointIcon";
-import type { About } from "@/payload-types";
+import type { SiteAbout } from "@/lib/site-content";
 import { mediaSrc } from "@/lib/cms";
 
-/** Big white card under the header: photo, core identity numbers, then mission and vision. */
-export function IdentityCard({ content }: { content: About }) {
+/** Big white card under the SiteHeader: photo, core identity numbers, then mission and vision. */
+export function IdentityCard({ content }: { content: SiteAbout }) {
   const { identity, mission, vision } = content;
   const img = mediaSrc(identity.image);
   return (
@@ -61,7 +61,7 @@ export function IdentityCard({ content }: { content: About }) {
   );
 }
 
-function Statement({ content, dark = false }: { content: About["mission"]; dark?: boolean }) {
+function Statement({ content, dark = false }: { content: SiteAbout["mission"]; dark?: boolean }) {
   return (
     <div
       className={`statement relative overflow-hidden rounded-[24px] p-7 md:p-8 ${
@@ -71,7 +71,7 @@ function Statement({ content, dark = false }: { content: About["mission"]; dark?
       }`}
     >
       {dark && (
-        <svg aria-hidden="true" viewBox="0 0 200 200" className="statement-rings absolute -right-16 -bottom-16 w-64 text-white/10">
+        <svg aria-hidden="true" viewBox="0 0 200 200" className="statement-rings absolute -end-16 -bottom-16 w-64 text-white/10">
           <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeDasharray="4 6" />
           <circle cx="100" cy="100" r="65" fill="none" stroke="currentColor" />
           <circle cx="100" cy="100" r="40" fill="none" stroke="currentColor" strokeDasharray="2 5" />

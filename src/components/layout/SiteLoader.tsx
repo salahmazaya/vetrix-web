@@ -1,6 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { localeFromPath } from "@/lib/i18n";
+import { copyFor } from "@/lib/ui-copy";
 import {
   LOGO_E_DOT,
   LOGO_E_SWOOSH,
@@ -21,6 +24,7 @@ type Phase = "loading" | "leaving" | "done";
  * loaded the screen opens outward from the dot over the i to reveal the site.
  */
 export function SiteLoader() {
+  const copy = copyFor(localeFromPath(usePathname() || "/en"));
   const [phase, setPhase] = useState<Phase>("loading");
   const [progress, setProgress] = useState(0);
   const root = useRef<HTMLDivElement>(null);
@@ -70,7 +74,7 @@ export function SiteLoader() {
   if (phase === "done") return null;
 
   return (
-    <div ref={root} className="site-loader" data-phase={phase} role="status" aria-label="Loading Vetrix">
+    <div ref={root} className="site-loader" data-phase={phase} role="status" aria-label={copy.loading}>
       <div aria-hidden="true" className="site-loader-glow" />
 
       <div className="site-loader-stage" aria-hidden="true">

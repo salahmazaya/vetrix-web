@@ -1,11 +1,12 @@
 import type { Payload } from "payload";
 import { seedContext as context, type Upload } from "./media";
+import { seedEn } from "./seedEn";
 
 export async function seedAiCore(payload: Payload, upload: Upload) {
   await payload.updateGlobal({
     slug: "aiCore",
     context,
-    data: {
+    data: seedEn({
       header: {
         title: "AI Core",
         headline: "Where *Deep* Tech Meets Business Logic",
@@ -78,6 +79,6 @@ export async function seedAiCore(payload: Payload, upload: Upload) {
           },
         ],
       },
-    },
+    }),
   });
 }

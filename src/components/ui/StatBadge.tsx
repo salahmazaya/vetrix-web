@@ -21,9 +21,9 @@ export function StatBadge({ value, label, className = "" }: StatBadgeProps) {
 export function BracketLabel({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative inline-flex h-10 items-center bg-gradient-to-r from-brand-bright/10 to-brand-bright/20 px-3 text-[18px] leading-7 whitespace-nowrap text-navy">
-      <Bracket className="absolute top-0 -left-[5px]" />
+      <Bracket className="absolute top-0 -start-[5px]" />
       {children}
-      <Bracket className="absolute top-0 -right-[5px] -scale-x-100" />
+      <Bracket className="absolute top-0 -end-[5px] -scale-x-100" />
     </span>
   );
 }

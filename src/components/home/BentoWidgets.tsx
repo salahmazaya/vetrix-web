@@ -14,7 +14,7 @@ export function AiToggle() {
       className="ai-toggle relative h-[72px] w-[132px] rounded-full border border-navy/40 bg-white/40 p-[7px]"
       aria-hidden="true"
     >
-      <span className="ai-toggle-fill absolute inset-[7px] rounded-full bg-gradient-to-r from-brand-bright/0 to-brand-bright/60" />
+      <span className="ai-toggle-fill absolute inset-[7px] rounded-full bg-gradient-to-r from-brand-bright/0 to-brand-bright/60 rtl:bg-gradient-to-l rtl:from-brand-bright/60 rtl:to-brand-bright/0" />
       <span className="ai-toggle-knob relative grid size-[58px] place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#2a3a8f,#070c3f_70%)] text-white shadow-[0_8px_18px_rgba(5,10,60,0.35)]">
         <Sparkles className="ai-twinkle w-7" />
       </span>
@@ -41,7 +41,7 @@ export function GenerateButton({ label }: { label: string }) {
       </span>
       <svg
         viewBox="0 0 24 24"
-        className="generate-cursor absolute -right-3 -bottom-4 w-6 drop-shadow"
+        className="generate-cursor absolute -end-3 -bottom-4 w-6 drop-shadow rtl:-scale-x-100"
         aria-hidden="true"
       >
         <path d="M4 2l15 9-6.5 1.6L16 20l-3 1.4-3.4-7.4L4 18z" fill="#0a0f2c" stroke="white" strokeWidth="1.2" />
@@ -154,11 +154,11 @@ const chips: Chip[] = [
     children: (
       <>
         <span
-          className="ml-[14%] rounded-full bg-sky/80 shadow-[0_0_0_3px_rgba(110,190,240,0.3)]"
+          className="ms-[14%] rounded-full bg-sky/80 shadow-[0_0_0_3px_rgba(110,190,240,0.3)]"
           style={{ width: u(12), height: u(12) }}
         />
         <span
-          className="mr-[10%] grid place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffb08a,#ff6a3d_70%)] text-white"
+          className="me-[10%] grid place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffb08a,#ff6a3d_70%)] text-white"
           style={{ width: u(22), height: u(22), fontSize: u(11) }}
         >
           ⚡

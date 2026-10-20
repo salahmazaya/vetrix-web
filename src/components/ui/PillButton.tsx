@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ArrowIcon } from "./ArrowIcon";
+import { LocaleLink } from "./LocaleLink";
 
 type PillButtonProps = {
   href: string;
@@ -23,12 +23,12 @@ export function PillButton({
   className = "",
 }: PillButtonProps) {
   return (
-    <Link
+    <LocaleLink
       href={href}
       className={`inline-flex items-center justify-center gap-2.5 rounded-full p-4 text-base leading-none transition-colors duration-200 ${variants[variant]} ${className}`}
     >
       {children}
       {withArrow && <ArrowIcon className="size-[13px]" />}
-    </Link>
+    </LocaleLink>
   );
 }

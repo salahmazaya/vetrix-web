@@ -1,10 +1,10 @@
-import Link from "next/link";
+import { LocaleLink } from "../ui/LocaleLink";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { Logo } from "../ui/Logo";
 import { Reveal } from "../motion/Reveal";
-import type { Footer as FooterContent } from "@/payload-types";
+import type { SiteFooter } from "@/lib/site-content";
 
-type Platform = NonNullable<FooterContent["socials"]>[number]["platform"];
+type Platform = NonNullable<SiteFooter["socials"]>[number]["platform"];
 
 const socialIcons: Record<Platform, { label: string; icon: React.ReactNode }> = {
   facebook: {
@@ -44,7 +44,7 @@ const socialIcons: Record<Platform, { label: string; icon: React.ReactNode }> = 
   },
 };
 
-export function Footer({ content }: { content: FooterContent }) {
+export function Footer({ content }: { content: SiteFooter }) {
   return (
     <footer className="bg-night-gradient relative overflow-hidden text-[#e4e4e4]">
       <BinaryPattern tone="dark" className="absolute -top-14 -left-16 w-56 opacity-60" />
@@ -60,6 +60,8 @@ export function Footer({ content }: { content: FooterContent }) {
               <li key={s.id ?? s.platform}>
                 <a
                   href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={socialIcons[s.platform].label}
                   className="flex size-8 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_2px_rgba(186,150,224,0.1)] transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:bg-brand-bright hover:shadow-[0_8px_18px_-4px_rgba(0,141,210,0.7)]"
                 >
@@ -77,9 +79,9 @@ export function Footer({ content }: { content: FooterContent }) {
             <ul className="flex flex-col gap-6 text-base">
               {col.links?.map((l) => (
                 <li key={l.id ?? l.label}>
-                  <Link href={l.href} className="footer-link transition-colors hover:text-white">
+                  <LocaleLink href={l.href} className="footer-link transition-colors hover:text-white">
                     {l.label}
-                  </Link>
+                  </LocaleLink>
                 </li>
               ))}
             </ul>

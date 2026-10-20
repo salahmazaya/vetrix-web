@@ -1,17 +1,17 @@
 import { Reveal } from "../motion/Reveal";
 import { BinaryPattern } from "../ui/BinaryPattern";
 import { PillButton } from "../ui/PillButton";
-import type { Cta } from "@/payload-types";
+import type { SiteCta } from "@/lib/site-content";
 
 /** "Ready to Scale?" band shown above the footer on every page. */
-export function CtaSection({ content }: { content: Cta }) {
+export function CtaSection({ content }: { content: SiteCta }) {
   return (
     <section className="relative isolate overflow-hidden bg-white px-4 py-24">
       {/* Soft brand-coloured lights drifting behind the text */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="cta-glow absolute top-1/2 left-1/2 size-[360px] -translate-x-[80%] -translate-y-1/2 rounded-full bg-[#9fdaff]" />
+        <div className="SiteCta-glow absolute top-1/2 left-1/2 size-[360px] -translate-x-[80%] -translate-y-1/2 rounded-full bg-[#9fdaff]" />
         <div
-          className="cta-glow absolute top-1/2 left-1/2 size-[300px] -translate-x-[10%] -translate-y-[40%] rounded-full bg-[#c9d4ff]"
+          className="SiteCta-glow absolute top-1/2 left-1/2 size-[300px] -translate-x-[10%] -translate-y-[40%] rounded-full bg-[#c9d4ff]"
           style={{ animationDelay: "-5s" }}
         />
       </div>
@@ -23,7 +23,7 @@ export function CtaSection({ content }: { content: Cta }) {
             {content.eyebrow}
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="cta-title-shine max-w-[492px] text-[30px] leading-[1.35] font-semibold tracking-[-0.02em] sm:text-[38px] sm:leading-[62px]">
+            <h2 className="SiteCta-title-shine max-w-[492px] text-[30px] leading-[1.35] font-semibold tracking-[-0.02em] sm:text-[38px] sm:leading-[62px]">
               {content.title.split("\n").map((line, i) => (
                 <span key={i}>
                   {i > 0 && <br className="max-sm:hidden" />}
@@ -40,7 +40,7 @@ export function CtaSection({ content }: { content: Cta }) {
           )}
         </div>
         <Reveal delay={300}>
-          <PillButton href={content.button.href} variant="brand" className="cta-button">
+          <PillButton href={content.button.href} variant="brand" className="SiteCta-button">
             {content.button.label}
           </PillButton>
         </Reveal>

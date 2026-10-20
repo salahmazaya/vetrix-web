@@ -29,6 +29,11 @@ export const imageField = (name: string, label?: string, required = true): Field
   type: "upload",
   relationTo: "media",
   required,
+  admin: {
+    components: {
+      Field: "@/payload/admin/VetrixUploadField#VetrixUploadField",
+    },
+  },
 });
 
 /** The blue band at the top of every inner page: page name, breadcrumb, headline and intro */

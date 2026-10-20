@@ -6,7 +6,7 @@ type ArrowIconProps = {
 export function ArrowIcon({ className }: ArrowIconProps) {
   return (
     <svg
-      className={className}
+      className={["rtl:-scale-x-100", className].filter(Boolean).join(" ")}
       width="13"
       height="13"
       viewBox="0 0 13 13"
